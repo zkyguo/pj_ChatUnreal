@@ -24,9 +24,6 @@ public:
 
 	TSharedPtr<ChatHttp::FHTTP> HTTP;
 
-	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
-	void SetOpenAiKey(const FString& Key);
-
 	UPROPERTY(BlueprintAssignable)
 	FChatGPTHttpResponseDelegate OnSucces;
 

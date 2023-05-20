@@ -24,7 +24,6 @@ namespace  ChatHttp
 		return false;
 	}
 
-
 	void FHTTP::OnRequestComplete(FHttpRequestPtr* HttpRequest, FHttpResponsePtr HttpResponse, bool IsSucces)
 	{
 		NotInUsed = true;

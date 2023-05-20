@@ -5,11 +5,6 @@ UChatGPTObject::UChatGPTObject()
 {
 }
 
-void UChatGPTObject::SetOpenAiKey(const FString& Key)
-{
-	HTTP->SetKOpenAiKey(Key);
-}
-
 UChatGPTObject* UChatGPTObject::CreateObject(UClass* InClass, UObject* parent)
 {
 	if(parent)
