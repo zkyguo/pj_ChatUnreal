@@ -43,9 +43,9 @@ namespace  ChatHttp
 		bool const IsNotInUse() { return NotInUsed; }
 
 		void SetKOpenAiKey(const FString& Key) { OpenAiKey = Key; }
-
+		
 	private:
-		void OnRequestComplete(FHttpRequestPtr* HttpRequest, FHttpResponsePtr HttpResponse, bool IsSucces);
+		void OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool IsSucces);
 		FString HttpVerbToString(EHttpVerbType verb);
 		bool NotInUsed;
 		FHTTPDelegate Delegate;

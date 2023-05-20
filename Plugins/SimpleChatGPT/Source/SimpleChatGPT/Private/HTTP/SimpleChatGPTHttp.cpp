@@ -16,18 +16,41 @@ namespace  ChatHttp
 
 	bool FHTTP::Request(const FString& InURL, const FString& Contents, const TMap<FString, FString> MetaDataHeader, EHttpVerbType requestType)
 	{
-		if (NotInUsed)
+		if(!OpenAiKey.IsEmpty())
 		{
-			NotInUsed = false;
+			if (NotInUsed)
+			{
+				// https://api.openai.com/v1/chat/completions 
+
+				NotInUsed = false;
+				TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
+				Request->SetURL(InURL);
+				Request->SetHeader(TEXT("Content-Type"), FString("application/json"));
+				Request->SetHeader(TEXT("Authorization"), FString::Printf(TEXT("Bearer %s"), *OpenAiKey));
+
+				for (auto& Tmp : MetaDataHeader)
+				{
+					Request->SetHeader(Tmp.Key, Tmp.Value);
+				}
+
+				Request->SetVerb(HttpVerbToString(requestType));
+				Request->SetContentAsString(Contents);
+
+				Request->OnProcessRequestComplete().BindSP(this, &FHTTP::OnRequestComplete);
+				Request->ProcessRequest();
+				return true;
+			}
 		}
+		
 
 		return false;
 	}
 
 
-	void FHTTP::OnRequestComplete(FHttpRequestPtr* HttpRequest, FHttpResponsePtr HttpResponse, bool IsSucces)
+	void FHTTP::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool IsSucces)
 	{
 		NotInUsed = true;
+		Delegate.HttpCompleteDelegate.ExecuteIfBound(HttpRequest, HttpResponse, IsSucces);
 	}
 
 	FString FHTTP::HttpVerbToString(EHttpVerbType verb)
