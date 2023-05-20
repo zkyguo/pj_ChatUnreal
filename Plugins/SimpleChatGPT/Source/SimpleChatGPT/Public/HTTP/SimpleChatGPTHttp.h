@@ -34,7 +34,7 @@ namespace  ChatHttp
 		/**
 		 * @brief Send request to server
 		 */
-		void Request(
+		bool Request(
 			const FString &InURL,
 			const FString &Contents,
 			const TMap<FString,FString> MetaDataHeader,

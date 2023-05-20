@@ -14,18 +14,21 @@ namespace  ChatHttp
 		return MakeShareable(new FHTTP(InDelegate));
 	}
 
-	void FHTTP::Request(const FString& InURL, const FString& Contents, const TMap<FString, FString> MetaDataHeader, EHttpVerbType requestType)
+	bool FHTTP::Request(const FString& InURL, const FString& Contents, const TMap<FString, FString> MetaDataHeader, EHttpVerbType requestType)
 	{
 		if (NotInUsed)
 		{
 			NotInUsed = false;
 		}
+
+		return false;
 	}
 
 	void FHTTP::OnRequestComplete(FHttpRequestPtr* HttpRequest, FHttpResponsePtr HttpResponse, bool IsSucces)
 	{
 		NotInUsed = true;
 	}
+
 	FString FHTTP::HttpVerbToString(EHttpVerbType verb)
 	{
 		switch (verb)
