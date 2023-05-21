@@ -12,3 +12,22 @@ FChatGPTCompletionParam::FChatGPTCompletionParam()
 	bStream = false;
 	Stop = TEXT("\n");
 }
+
+
+FChatGPTChoice::FChatGPTChoice()
+{
+	Index = INDEX_NONE;
+}
+
+FChatGPTUsage::FChatGPTUsage()
+{
+	PromptTokens = INDEX_NONE;
+	CompletionTokens = INDEX_NONE;
+	TotalTokens = INDEX_NONE;
+}
+
+FChatGPTCompletionResponse::FChatGPTCompletionResponse()
+{
+	Created = INDEX_NONE;
+	Mode = EChatGPTModel::NONE;
+}
