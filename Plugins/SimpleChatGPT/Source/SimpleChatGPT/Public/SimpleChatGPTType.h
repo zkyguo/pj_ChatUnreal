@@ -4,10 +4,10 @@
 #include "SimpleChatGPTType.generated.h"
 
 UENUM(BlueprintType)
-enum ESimpleChatGPTMode : uint8
+enum class EChatGPTModel : uint8
 {
 	
-	DAVINCI_003 UMETA(displayName = "text_davinci-003"),
+	DAVINCI_003 UMETA(DisplayName = "text_davinci-003"),
 	GPT_MAX,
 };
 
@@ -19,7 +19,9 @@ struct SIMPLECHATGPT_API FChatGPTCompletionParam
 	FChatGPTCompletionParam();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="CompletionParam")
-	ESimpleChatGPTMode mode;
+	EChatGPTModel Mode;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CompletionParam")
+	FString Prompt;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CompletionParam")
 	int32 MaxToken;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CompletionParam")

@@ -4,7 +4,7 @@
 
 FChatGPTCompletionParam::FChatGPTCompletionParam()
 {
-	mode = ESimpleChatGPTMode::DAVINCI_003;
+	Mode = EChatGPTModel::DAVINCI_003;
 	MaxToken = 300;
 	Temperature = 0.5f;
 	Top_p = 1.0f;

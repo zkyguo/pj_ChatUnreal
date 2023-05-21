@@ -36,6 +36,7 @@ public class SimpleChatGPT : ModuleRules
 			{
 				"CoreUObject",
 				"HTTP",
+				"Json",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
