@@ -47,6 +47,14 @@ namespace  ChatHttp
 	}
 
 
+	bool FHTTP::Request(const FString& InURL, const FChatGPTCompletionParam& param,
+		const TMap<FString, FString> MetaDataHeader, EHttpVerbType requestType)
+	{
+		FString ParamJson;
+		SimpleChatGPTMethod::FChatGPTCompletionParamToString(param, ParamJson);
+		return Request(InURL, ParamJson, MetaDataHeader, requestType);
+	}
+
 	void FHTTP::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool IsSucces)
 	{
 		NotInUsed = true;

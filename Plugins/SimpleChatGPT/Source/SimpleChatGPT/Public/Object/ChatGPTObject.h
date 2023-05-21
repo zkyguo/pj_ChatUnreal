@@ -11,11 +11,14 @@ class SIMPLECHATGPT_API UChatGPTObject : public UObject
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "CreateChatGPTObject", Keywords = "GPT"), Category = "ChatGPT")
-	static  UChatGPTObject* CreateObject(UClass* InClass = NULL, UObject* parent = NULL);
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "CreateChatGPTObject", Keywords = "GPT", WorldContext = "Worldcontext"), Category = "ChatGPT" )
+	static UChatGPTObject* CreateObject(UObject* Worldcontext,UClass* InClass = NULL, UObject* parent = NULL);
 
 	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
 	bool Request(const FString& InURL, const FString& Contents, const TMap<FString, FString> MetaDataHeader);
+
+	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
+	bool RequestByGPTParam(const FString& InURL, const FChatGPTCompletionParam& param, const TMap<FString, FString> MetaDataHeader);
 
 	UFUNCTION(BlueprintPure, Category = "ChatGPT")
 	bool IsNotInUse() const;

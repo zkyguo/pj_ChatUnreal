@@ -10,12 +10,20 @@ void UChatGPTObject::SetOpenAiKey(const FString& Key)
 	HTTP->SetKOpenAiKey(Key);
 }
 
-UChatGPTObject* UChatGPTObject::CreateObject(UClass* InClass, UObject* parent)
+UChatGPTObject* UChatGPTObject::CreateObject(UObject* Worldcontext,UClass* InClass, UObject* parent)
 {
+	check(Worldcontext != NULL);
+
+	UClass* myclass = InClass;
+	if(!InClass)
+	{
+		myclass = UChatGPTObject::StaticClass();
+	}
+
 	if(parent)
 	{
 		//Create UObject under parent
-		if (UChatGPTObject* obj = NewObject<UChatGPTObject>(parent, InClass))
+		if (UChatGPTObject* obj = NewObject<UChatGPTObject>(parent, myclass))
 		{
 			obj->InitChatGPT();
 			return obj;
@@ -23,9 +31,8 @@ UChatGPTObject* UChatGPTObject::CreateObject(UClass* InClass, UObject* parent)
 	}
 	else
 	{
-		if (UChatGPTObject* obj = NewObject<UChatGPTObject>(NULL, InClass))
+		if (UChatGPTObject* obj = NewObject<UChatGPTObject>(Worldcontext, myclass))
 		{
-			obj->AddToRoot();
 			obj->InitChatGPT();
 			return obj;
 		}
@@ -36,6 +43,11 @@ UChatGPTObject* UChatGPTObject::CreateObject(UClass* InClass, UObject* parent)
 bool UChatGPTObject::Request(const FString& InURL, const FString& Contents, const TMap<FString, FString> MetaDataHeader)
 {
 	return HTTP->Request(InURL, Contents, MetaDataHeader);
+}
+
+bool UChatGPTObject::RequestByGPTParam(const FString& InURL, const FChatGPTCompletionParam& param, const TMap<FString, FString> MetaDataHeader)
+{
+	return HTTP->Request(InURL, param, MetaDataHeader);
 }
 
 bool UChatGPTObject::IsNotInUse() const
