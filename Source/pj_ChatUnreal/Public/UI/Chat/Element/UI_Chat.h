@@ -27,4 +27,7 @@ class PJ_CHATUNREAL_API UUI_Chat : public UUI_Base
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UMultiLineEditableText> TextContent;
+
+public:
+	void SetTextContent(const FText& Chat);
 };

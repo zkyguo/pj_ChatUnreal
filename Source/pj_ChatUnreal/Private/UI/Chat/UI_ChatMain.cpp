@@ -5,6 +5,7 @@
 
 UUI_ChatMain::UUI_ChatMain()
 {
+	isLocalLink = true;
 }
 
 void UUI_ChatMain::NativeConstruct()
@@ -15,4 +16,17 @@ void UUI_ChatMain::NativeConstruct()
 void UUI_ChatMain::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+}
+
+void UUI_ChatMain::OnSendRequest(int32 InID, const FText& inText)
+{
+	if(isLocalLink)
+	{
+		
+	}
+	else
+	{
+		
+	}
+
 }

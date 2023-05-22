@@ -16,3 +16,8 @@ void UUI_Chat::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
+
+void UUI_Chat::SetTextContent(const FText& Chat)
+{
+	TextContent->SetText(Chat);
+}

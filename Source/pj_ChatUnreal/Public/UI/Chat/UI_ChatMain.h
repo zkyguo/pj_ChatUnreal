@@ -28,4 +28,10 @@ class PJ_CHATUNREAL_API UUI_ChatMain : public UUI_Base
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UUI_ChatHistoryList> ChatHistoryList;
+
+	UPROPERTY()
+	bool isLocalLink;
+
+public:
+	void OnSendRequest(int32 InID,const FText &inText);
 };

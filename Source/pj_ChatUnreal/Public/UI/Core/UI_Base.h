@@ -13,5 +13,14 @@ UCLASS()
 class PJ_CHATUNREAL_API UUI_Base : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+protected:
+	UUserWidget* GetUserWidgetsClass(TSubclassOf<UUserWidget> widgetClass);
+
+	template<class T>
+	T* GetUserWidgetsClass(TSubclassOf<UUserWidget> widgetClass)
+	{
+		return Cast<T>(GetUserWidgetsClass(widgetClass));
+	}
 };
+

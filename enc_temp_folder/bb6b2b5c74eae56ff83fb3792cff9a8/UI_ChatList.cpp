@@ -56,7 +56,7 @@ UUI_Chat* UUI_ChatList::AddRequestChat(int32 ID, const FText& Content)
 			if(UScrollBoxSlot *ScrollBoxSlot = Cast<UScrollBoxSlot>(ListBox->AddChild(Chat)))
 			{
 				ScrollBoxSlot->SetPadding(FMargin(90.f, 10.f, 10.f, 10.f));
-				ScrollBoxSlot->SetHorizontalAlignment(HAlign_Left);
+
 				return Chat;
 			}
 		}
@@ -74,7 +74,7 @@ UUI_Chat* UUI_ChatList::AddResponseChat(int32 ID, const FText& Content)
 			if (UScrollBoxSlot* ScrollBoxSlot = Cast<UScrollBoxSlot>(ListBox->AddChild(Chat)))
 			{
 				ScrollBoxSlot->SetPadding(FMargin(10.f, 10.f, 90.f, 10.f));
-				ScrollBoxSlot->SetHorizontalAlignment(HAlign_Right);
+
 				return Chat;
 			}
 		}
