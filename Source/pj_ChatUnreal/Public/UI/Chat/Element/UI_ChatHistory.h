@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UI/Core/UI_Base.h"
+#include <Components/CheckBox.h>
+#include <Components/MultiLineEditableText.h>
 #include "UI_ChatHistory.generated.h"
+
+
 
 /**
  * 
@@ -13,5 +17,18 @@ UCLASS()
 class PJ_CHATUNREAL_API UUI_ChatHistory : public UUI_Base
 {
 	GENERATED_BODY()
-	
+
+	UUI_ChatHistory();
+	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCheckBox> CheckBox;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UMultiLineEditableText> HistoryName;
+
+protected:
+	UFUNCTION()
+	void OnStatementChange(bool bIsChecked);
 };
