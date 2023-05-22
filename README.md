@@ -1,2 +1,2 @@
 # pj_ChatUnreal
- A chatGPT bot on Unreal
+ This is a simple chatGPT bot on Unreal
