@@ -13,5 +13,7 @@ UCLASS()
 class PJ_CHATUNREAL_API Apj_ChatUnrealGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+	Apj_ChatUnrealGameModeBase();
+
 };
