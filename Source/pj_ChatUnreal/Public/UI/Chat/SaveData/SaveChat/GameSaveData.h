@@ -15,8 +15,6 @@ class UGameSaveData : public UChatSaveCore
 	UPROPERTY(SaveGame)
 	TArray<FChatSaveData> ChatDatas;
 
-
-
 public:
 	virtual void InitSaveChat(UWorld* InWorld) override;
 	virtual void InitSaveChatFromArchive(UWorld* InWorld) override;

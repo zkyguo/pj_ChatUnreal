@@ -13,5 +13,5 @@ struct FSaveSlot
 	FString DateText;
 
 	UPROPERTY(SaveGame)
-	FString SlotName;
+	FText SlotName;
 };

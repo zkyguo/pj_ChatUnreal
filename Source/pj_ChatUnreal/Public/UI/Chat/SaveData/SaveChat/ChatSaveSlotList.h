@@ -18,5 +18,5 @@ public:
 	virtual void InitSaveChatFromArchive(UWorld* InWorld) override;
 
 	UPROPERTY(SaveGame)
-	TMap<int32, FSaveSlot> Slots;
+	TArray<FSaveSlot> Slots;
 };
