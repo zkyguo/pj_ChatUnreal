@@ -6,29 +6,18 @@
 
 AChatGameState::AChatGameState()
 {
-}
-
-UGameSaveData* AChatGameState::FindCurrentGameSaveData()
-{
-	return NULL;
-}
-
-void AChatGameState::BeginPlay()
-{
-	Super::BeginPlay();
-
 	/// <summary>
-	/// If local save data exists, load data and get the recent save data
-	/// </summary>
-	if (UChatSaveSlotList* LocalSaveData = Cast<UChatSaveSlotList>(UGameplayStatics::LoadGameFromSlot(TEXT("SlotList"),0)))
+/// If local save data exists, load data and get the recent save data
+/// </summary>
+	if (UChatSaveSlotList* LocalSaveData = Cast<UChatSaveSlotList>(UGameplayStatics::LoadGameFromSlot(TEXT("SlotList"), 0)))
 	{
 		SaveSlotList = LocalSaveData;
 		FDateTime TmpSaveDateTime;
-		for(auto &tmp : SaveSlotList->Slots)
+		for (auto& tmp : SaveSlotList->Slots)
 		{
 			FDateTime SaveDateTime;
 			FDateTime::Parse(tmp.DateText, SaveDateTime);
-			if(TmpSaveDateTime < SaveDateTime )
+			if (TmpSaveDateTime < SaveDateTime)
 			{
 				TmpSaveDateTime = SaveDateTime;
 				currentSlotName = tmp.SlotName.ToString();
@@ -40,7 +29,7 @@ void AChatGameState::BeginPlay()
 	else //if not, create one
 	{
 		SaveSlotList = Cast<UChatSaveSlotList>(UGameplayStatics::CreateSaveGameObject(UChatSaveSlotList::StaticClass()));
-		if(SaveSlotList)
+		if (SaveSlotList)
 		{
 			FSaveSlot& InputSlot = SaveSlotList->Slots.AddDefaulted_GetRef();
 
@@ -49,13 +38,25 @@ void AChatGameState::BeginPlay()
 			InputSlot.DateText = FDateTime::Now().ToString();
 			InputSlot.SlotName = FText::FromString(currentSlotName);
 
-			if(UGameSaveData* NewSaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass())))
+			if (UGameSaveData* NewSaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass())))
 			{
 				SaveData.Add(InputSlot.SlotName.ToString(), NewSaveData);
 				SaveGameData(InputSlot.SlotName.ToString());
 			}
 		}
 	}
+}
+
+UGameSaveData* AChatGameState::FindCurrentGameSaveData()
+{
+	return NULL;
+}
+
+void AChatGameState::BeginPlay()
+{
+	Super::BeginPlay();
+
+
 }
 
 UGameSaveData* AChatGameState::FindSaveData(const FString& InName)
@@ -79,8 +80,13 @@ UGameSaveData* AChatGameState::FindSaveData(const FString& InName)
 	return NULL;
 }
 
-UChatSaveSlotList* AChatGameState::GetSaveSlotList() const
+UChatSaveSlotList* AChatGameState::GetSaveSlotList()
 {
+	if(!SaveSlotList)
+	{
+		InitSaveData();
+	}
+
 	return SaveSlotList;
 }
 
@@ -95,6 +101,10 @@ void AChatGameState::AddText(int32 InID, const FString& InContent)
 
 		SaveGameData(currentSlotName);
 	}
+}
+
+void AChatGameState::InitSaveData()
+{
 }
 
 bool AChatGameState::SaveGameData(const FString& InSlotName)

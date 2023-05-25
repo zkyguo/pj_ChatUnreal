@@ -19,4 +19,6 @@ public:
 
 	UPROPERTY(SaveGame)
 	TArray<FSaveSlot> Slots;
+
+	
 };

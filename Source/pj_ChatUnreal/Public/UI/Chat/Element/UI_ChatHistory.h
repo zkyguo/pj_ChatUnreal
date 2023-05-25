@@ -18,9 +18,14 @@ class PJ_CHATUNREAL_API UUI_ChatHistory : public UUI_Base
 {
 	GENERATED_BODY()
 
+public :
 	UUI_ChatHistory();
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	void SetTextContent(const FText& InText);
+
+	FString GetTextContent() const;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCheckBox> CheckBox;

@@ -27,4 +27,6 @@ class PJ_CHATUNREAL_API UUI_ChatHistoryList : public UUI_Base
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UScrollBox> ListBox;
+
+	UUI_ChatHistory* AddHistorySlot(const FString& InContent);
 };

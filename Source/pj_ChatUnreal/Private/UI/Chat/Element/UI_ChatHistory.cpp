@@ -18,6 +18,17 @@ void UUI_ChatHistory::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
+void UUI_ChatHistory::SetTextContent(const FText& InText)
+{
+	HistoryName->SetText(InText);
+}
+
+FString UUI_ChatHistory::GetTextContent() const
+{
+	return HistoryName->GetText().ToString();	
+}
+
+
 void UUI_ChatHistory::OnStatementChange(bool bIsChecked)
 {
 
