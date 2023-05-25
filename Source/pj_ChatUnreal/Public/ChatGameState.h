@@ -20,15 +20,17 @@ class PJ_CHATUNREAL_API AChatGameState : public AGameStateBase
 
 	AChatGameState();
 
-	UGameSaveData* FindGameSaveData(const FString &InName) const;
+	UGameSaveData* FindCurrentGameSaveData();
+	UGameSaveData* FindSaveData(const FString &InName);
 	UChatSaveSlotList* GetSaveSlotList() const;
 
-	bool SaveGameData(const FString& InData);
+	void AddText(int32 InID,const FString &InData);
 
+	bool SaveGameData(const FString& InData);
 	bool LoadGameData(const FString& InData);
+	bool DeleteGameData(const FString& InData);
 
 	void SetCurrentSlotName(const FString &Name) { currentSlotName = Name; }
-
 	FString GetCurrentSlotName() const { return  currentSlotName; }
 protected:
 	virtual void BeginPlay() override;

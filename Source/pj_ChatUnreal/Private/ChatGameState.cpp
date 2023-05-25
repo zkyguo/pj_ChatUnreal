@@ -8,6 +8,11 @@ AChatGameState::AChatGameState()
 {
 }
 
+UGameSaveData* AChatGameState::FindCurrentGameSaveData()
+{
+	return NULL;
+}
+
 void AChatGameState::BeginPlay()
 {
 	Super::BeginPlay();
@@ -53,14 +58,25 @@ void AChatGameState::BeginPlay()
 	}
 }
 
-UGameSaveData* AChatGameState::FindGameSaveData(const FString& InName) const
+UGameSaveData* AChatGameState::FindSaveData(const FString& InName)
 {
 	if(const TObjectPtr<UGameSaveData> *InSaveData = SaveData.Find(InName))
 	{
 		return InSaveData->Get();
 	}
+	else
+	{
+		if(LoadGameData(InName))
+		{
+			if (const TObjectPtr<UGameSaveData>* SaveDataLoad = SaveData.Find(InName))
+			{
+				return SaveDataLoad->Get();
+			}
+		}
+		
+	}
 
-	return nullptr;
+	return NULL;
 }
 
 UChatSaveSlotList* AChatGameState::GetSaveSlotList() const
@@ -68,14 +84,27 @@ UChatSaveSlotList* AChatGameState::GetSaveSlotList() const
 	return SaveSlotList;
 }
 
+void AChatGameState::AddText(int32 InID, const FString& InContent)
+{
+	if (UGameSaveData* InSaveData = FindSaveData(currentSlotName))
+	{
+		FChatSaveData& InData = InSaveData->ChatDatas.AddDefaulted_GetRef();
+		InData.ID = InID;
+		InData.InContent = InContent;
+		InData.Time = FDateTime::Now().ToString();
+
+		SaveGameData(currentSlotName);
+	}
+}
+
 bool AChatGameState::SaveGameData(const FString& InSlotName)
 {
 	if(SaveSlotList && !SaveData.IsEmpty())
 	{
-		if(const TObjectPtr<UGameSaveData>* InSaveData = SaveData.Find(InSlotName))
+		if(UGameSaveData* InSaveData = FindSaveData(InSlotName))
 		{
 			return UGameplayStatics::SaveGameToSlot(SaveSlotList, FString::Printf(TEXT("SlotList")), 0) && 
-				UGameplayStatics::SaveGameToSlot(*InSaveData, InSlotName,0);
+				UGameplayStatics::SaveGameToSlot(InSaveData, InSlotName,0);
 		}
 	}
 
@@ -91,6 +120,21 @@ bool AChatGameState::LoadGameData(const FString& InData)
 			SaveData.Add(InData,InSaveData);
 			return true;
 		}
+	}
+	return false;
+}
+
+bool AChatGameState::DeleteGameData(const FString& SlotName)
+{
+	if (SaveData.Contains(SlotName) && UGameplayStatics::DeleteGameInSlot(SlotName,0))
+	{
+		FSaveSlot Slot;
+		Slot.SlotName = FText::FromString(SlotName);
+
+		SaveSlotList->Slots.Remove(Slot);
+
+		return UGameplayStatics::SaveGameToSlot(SaveSlotList, FString::Printf(TEXT("SlotList")),0);
+		
 	}
 	return false;
 }

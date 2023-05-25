@@ -12,12 +12,14 @@ class UGameSaveData : public UChatSaveCore
 {
 	GENERATED_BODY()
 
-	UPROPERTY(SaveGame)
-	TArray<FChatSaveData> ChatDatas;
 
 public:
 	virtual void InitSaveChat(UWorld* InWorld) override;
 	virtual void InitSaveChatFromArchive(UWorld* InWorld) override;
+
+
+	UPROPERTY(SaveGame)
+	TArray<FChatSaveData> ChatDatas;
 
 
 };
