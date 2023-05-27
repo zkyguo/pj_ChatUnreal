@@ -28,9 +28,18 @@ public :
 	void AddText(int32 InID,const FString &InData);
 	void InitSaveData();
 
-	bool SaveGameData(const FString& InData);
-	bool LoadGameData(const FString& InData);
-	bool DeleteGameData(const FString& InData);
+	bool SaveGameData(const FString& SlotName);
+	bool LoadGameData(const FString& SlotName);
+
+	FString AddGameData();
+	bool DeleteGameData(const FString& SlotName);
+	bool DeleteCurrentGameData();
+
+	bool IsLastSavaDataSlot() const;
+	FString GetUniqueSaveDataName();
+	FString GetUniqueSaveDataName(const FString &InName, int32 index) const;
+
+	void UpdateCurrentSlotName();
 
 	void SetCurrentSlotName(const FString &Name) { currentSlotName = Name; }
 	FString GetCurrentSlotName() const { return  currentSlotName; }

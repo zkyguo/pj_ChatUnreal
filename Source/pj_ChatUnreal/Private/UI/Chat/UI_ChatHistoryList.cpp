@@ -12,17 +12,11 @@ UUI_ChatHistoryList::UUI_ChatHistoryList()
 void UUI_ChatHistoryList::NativeConstruct()
 {
 	Super::NativeConstruct();
-	if(AChatGameState *GameState = GetWorld()->GetGameState<AChatGameState>())
-	{
-		if(auto *slotList = GameState->GetSaveSlotList())
-		{
-			for (FSaveSlot &tmp : slotList->Slots)
-			{
-				AddHistorySlot(tmp.SlotName.ToString());
-				
-			}
-		}
-	}	
+
+	AddSlotButton->OnClicked.AddDynamic(this, &UUI_ChatHistoryList::OnAddSlot);
+	DeleteSlotButton->OnClicked.AddDynamic(this, &UUI_ChatHistoryList::OnDeleteSlot);
+	UpdateHistorySlot();
+	
 }
 
 void UUI_ChatHistoryList::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -47,4 +41,44 @@ UUI_ChatHistory* UUI_ChatHistoryList::AddHistorySlot(const FString& InContent)
 	}
 
 	return NULL;
+}
+
+void UUI_ChatHistoryList::UpdateHistorySlot()
+{
+	if (AChatGameState* GameState = GetWorld()->GetGameState<AChatGameState>())
+	{
+		if (auto* slotList = GameState->GetSaveSlotList())
+		{
+			for (FSaveSlot& tmp : slotList->Slots)
+			{
+				AddHistorySlot(tmp.SlotName.ToString());
+
+			}
+		}
+	}
+}
+
+void UUI_ChatHistoryList::OnAddSlot()
+{
+	if(AChatGameState *GameState = GetWorld()->GetGameState<AChatGameState>())
+	{
+		FString SlotName = GameState->AddGameData();
+		if(!SlotName.IsEmpty())
+		{
+			AddHistorySlot(SlotName);
+		}
+
+	}
+}
+
+void UUI_ChatHistoryList::OnDeleteSlot()
+{
+	if (AChatGameState* GameState = GetWorld()->GetGameState<AChatGameState>())
+	{
+		if(GameState->DeleteCurrentGameData())
+		{
+			ListBox->ClearChildren();
+			UpdateHistorySlot();
+		}
+	}
 }

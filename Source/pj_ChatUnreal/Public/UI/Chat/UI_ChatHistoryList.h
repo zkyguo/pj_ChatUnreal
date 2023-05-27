@@ -6,6 +6,7 @@
 #include "UI/Core/UI_Base.h"
 #include "Element/UI_ChatHistory.h"
 #include <Components/ScrollBox.h>
+#include <Components/Button.h>
 #include "UI_ChatHistoryList.generated.h"
 
 
@@ -17,7 +18,7 @@ UCLASS()
 class PJ_CHATUNREAL_API UUI_ChatHistoryList : public UUI_Base
 {
 	GENERATED_BODY()
-
+public:
 	UUI_ChatHistoryList();
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -28,5 +29,22 @@ class PJ_CHATUNREAL_API UUI_ChatHistoryList : public UUI_Base
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UScrollBox> ListBox;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> AddSlotButton;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> DeleteSlotButton;
+
 	UUI_ChatHistory* AddHistorySlot(const FString& InContent);
+
+	void UpdateHistorySlot();
+
+protected:
+	UFUNCTION()
+	void OnAddSlot();
+
+	UFUNCTION()
+	void OnDeleteSlot();
+
+
 };

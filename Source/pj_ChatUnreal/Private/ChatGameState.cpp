@@ -6,45 +6,8 @@
 
 AChatGameState::AChatGameState()
 {
-	/// <summary>
-/// If local save data exists, load data and get the recent save data
-/// </summary>
-	if (UChatSaveSlotList* LocalSaveData = Cast<UChatSaveSlotList>(UGameplayStatics::LoadGameFromSlot(TEXT("SlotList"), 0)))
-	{
-		SaveSlotList = LocalSaveData;
-		FDateTime TmpSaveDateTime;
-		for (auto& tmp : SaveSlotList->Slots)
-		{
-			FDateTime SaveDateTime;
-			FDateTime::Parse(tmp.DateText, SaveDateTime);
-			if (TmpSaveDateTime < SaveDateTime)
-			{
-				TmpSaveDateTime = SaveDateTime;
-				currentSlotName = tmp.SlotName.ToString();
-			}
-		}
+	
 
-		LoadGameData(currentSlotName);
-	}
-	else //if not, create one
-	{
-		SaveSlotList = Cast<UChatSaveSlotList>(UGameplayStatics::CreateSaveGameObject(UChatSaveSlotList::StaticClass()));
-		if (SaveSlotList)
-		{
-			FSaveSlot& InputSlot = SaveSlotList->Slots.AddDefaulted_GetRef();
-
-			currentSlotName = TEXT("New Slot");
-
-			InputSlot.DateText = FDateTime::Now().ToString();
-			InputSlot.SlotName = FText::FromString(currentSlotName);
-
-			if (UGameSaveData* NewSaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass())))
-			{
-				SaveData.Add(InputSlot.SlotName.ToString(), NewSaveData);
-				SaveGameData(InputSlot.SlotName.ToString());
-			}
-		}
-	}
 }
 
 UGameSaveData* AChatGameState::FindCurrentGameSaveData()
@@ -105,8 +68,42 @@ void AChatGameState::AddText(int32 InID, const FString& InContent)
 
 void AChatGameState::InitSaveData()
 {
+	if (UChatSaveSlotList* LocalSaveData = Cast<UChatSaveSlotList>(UGameplayStatics::LoadGameFromSlot(TEXT("SlotList"), 0)))
+	{
+		SaveSlotList = LocalSaveData;
+		UpdateCurrentSlotName();
+
+		for(auto &tmp : SaveSlotList->Slots)
+		{
+			LoadGameData(tmp.SlotName.ToString());
+		}
+	}
+	else //if not, create one
+	{
+		SaveSlotList = Cast<UChatSaveSlotList>(UGameplayStatics::CreateSaveGameObject(UChatSaveSlotList::StaticClass()));
+		if (SaveSlotList)
+		{
+			FSaveSlot& InputSlot = SaveSlotList->Slots.AddDefaulted_GetRef();
+
+			currentSlotName = TEXT("New Slot");
+
+			InputSlot.DateText = FDateTime::Now().ToString();
+			InputSlot.SlotName = FText::FromString(currentSlotName);
+
+			if (UGameSaveData* NewSaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass())))
+			{
+				SaveData.Add(InputSlot.SlotName.ToString(), NewSaveData);
+				SaveGameData(InputSlot.SlotName.ToString());
+			}
+		}
+	}
 }
 
+/**
+ * @brief Save GameData to Unreal UGameplayStatics
+ * @param InSlotName 
+ * @return 
+ */
 bool AChatGameState::SaveGameData(const FString& InSlotName)
 {
 	if(SaveSlotList && !SaveData.IsEmpty())
@@ -123,7 +120,7 @@ bool AChatGameState::SaveGameData(const FString& InSlotName)
 
 bool AChatGameState::LoadGameData(const FString& InData)
 {
-	if(SaveData.Contains(InData))
+	if(!SaveData.Contains(InData))
 	{
 		if (UGameSaveData* InSaveData = Cast<UGameSaveData>(UGameplayStatics::LoadGameFromSlot(InData, 0)))
 		{
@@ -134,11 +131,31 @@ bool AChatGameState::LoadGameData(const FString& InData)
 	return false;
 }
 
+FString AChatGameState::AddGameData() 
+{
+	FString SaveDataName = GetUniqueSaveDataName();
+	if(UGameSaveData* NewSaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass())))
+	{
+		SaveData.Add(SaveDataName, NewSaveData);
+		FSaveSlot& Slot = SaveSlotList->Slots.AddDefaulted_GetRef();
+		Slot.DateText = FDateTime::Now().ToString();
+		Slot.SlotName = FText::FromString(SaveDataName);
+		if(SaveGameData(SaveDataName))
+		{
+			currentSlotName = SaveDataName;
+			return SaveDataName;
+		}
+	}
+
+	return TEXT("");
+}
+
 bool AChatGameState::DeleteGameData(const FString& SlotName)
 {
 	if (SaveData.Contains(SlotName) && UGameplayStatics::DeleteGameInSlot(SlotName,0))
 	{
 		FSaveSlot Slot;
+		SaveData.Remove(SlotName);
 		Slot.SlotName = FText::FromString(SlotName);
 
 		SaveSlotList->Slots.Remove(Slot);
@@ -147,6 +164,66 @@ bool AChatGameState::DeleteGameData(const FString& SlotName)
 		
 	}
 	return false;
+}
+
+bool AChatGameState::DeleteCurrentGameData()
+{
+	if(!IsLastSavaDataSlot())
+	{
+		if(DeleteGameData(currentSlotName))
+		{
+			UpdateCurrentSlotName();
+			return true;
+		}
+	}
+	return false;
+}
+
+bool AChatGameState::IsLastSavaDataSlot() const
+{
+	return SaveData.Num() == 1;
+}
+
+FString AChatGameState::GetUniqueSaveDataName()
+{
+	FString SlotName = TEXT("NewSlot");
+	FString CompareName = FString::Printf(TEXT("%s_%i"), *SlotName, SaveSlotList->Slots.Num());
+	for(auto &Tmp : SaveSlotList->Slots)
+	{
+		if(Tmp.SlotName.ToString().Equals(CompareName))
+		{
+			return GetUniqueSaveDataName(SlotName, SaveSlotList->Slots.Num());
+		}
+	}
+	return CompareName;
+}
+
+FString AChatGameState::GetUniqueSaveDataName(const FString& InName, int32 index) const
+{
+	FString CompareName = FString::Printf(TEXT("%s_%i"), *InName, ++index);
+	for (auto& Tmp : SaveSlotList->Slots)
+	{
+		if (Tmp.SlotName.ToString().Equals(CompareName))
+		{
+			return GetUniqueSaveDataName(InName, index);
+		}
+	}
+	return CompareName;
+}
+
+void AChatGameState::UpdateCurrentSlotName()
+{
+	FDateTime TmpSaveDateTime;
+	for (auto& tmp : SaveSlotList->Slots)
+	{
+		FDateTime SaveDateTime;
+		FDateTime::Parse(tmp.DateText, SaveDateTime);
+		if (TmpSaveDateTime < SaveDateTime)
+		{
+			TmpSaveDateTime = SaveDateTime;
+			currentSlotName = tmp.SlotName.ToString();
+		}
+	}
 }
 
 
