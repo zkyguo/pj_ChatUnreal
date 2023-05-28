@@ -22,10 +22,11 @@ public :
 	UUI_ChatHistory();
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	void SetClicked(bool isClicked);
 
 	void SetTextContent(const FText& InText);
-
 	FString GetTextContent() const;
+
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCheckBox> CheckBox;

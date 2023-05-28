@@ -41,7 +41,7 @@ public :
 
 	void UpdateCurrentSlotName();
 
-	void SetCurrentSlotName(const FString &Name) { currentSlotName = Name; }
+	void SetCurrentSlotName(const FString& Name);
 	FString GetCurrentSlotName() const { return  currentSlotName; }
 protected:
 	virtual void BeginPlay() override;

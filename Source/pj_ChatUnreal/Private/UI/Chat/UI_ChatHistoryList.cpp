@@ -54,6 +54,8 @@ void UUI_ChatHistoryList::UpdateHistorySlot()
 				AddHistorySlot(tmp.SlotName.ToString());
 
 			}
+			UpdateSelectHistorySlot();
+			ListBox->ScrollToEnd();
 		}
 	}
 }
@@ -66,8 +68,10 @@ void UUI_ChatHistoryList::OnAddSlot()
 		if(!SlotName.IsEmpty())
 		{
 			AddHistorySlot(SlotName);
+			
 		}
-
+		UpdateSelectHistorySlot();
+		ListBox->ScrollToEnd();
 	}
 }
 
@@ -82,3 +86,48 @@ void UUI_ChatHistoryList::OnDeleteSlot()
 		}
 	}
 }
+
+void UUI_ChatHistoryList::CallHistorySlot(TFunction<EHandleHistorySlotResult(UUI_ChatHistory*)> InFun)
+{
+	for (auto &tmp : ListBox->GetAllChildren())
+	{
+		UUI_ChatHistory* InHistory = Cast<UUI_ChatHistory>(tmp);
+		if(InFun(InHistory) == EHandleHistorySlotResult::COMPLETE )
+		{
+			break;
+		}
+	}
+	 
+}
+
+void UUI_ChatHistoryList::ClearClicked()
+{
+}
+
+
+void UUI_ChatHistoryList::UpdateSelectHistorySlot()
+{
+	if(AChatGameState *GameState = GetWorld()->GetGameState<AChatGameState>())
+	{
+		UpdateSelectHistorySlot(GameState->GetCurrentSlotName());
+	}
+}
+
+void UUI_ChatHistoryList::UpdateSelectHistorySlot(const FString& SlotName)
+{
+
+	CallHistorySlot([&](UUI_ChatHistory* InSlot) {
+
+		if (InSlot->GetTextContent().Equals(SlotName))
+		{
+			InSlot->SetClicked(true);
+		}
+		else
+		{
+			InSlot->SetClicked(false);
+		}
+
+		return EHandleHistorySlotResult::INPROGRESS;
+		});
+}
+

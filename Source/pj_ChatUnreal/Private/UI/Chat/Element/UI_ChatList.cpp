@@ -36,6 +36,7 @@ void UUI_ChatList::OnSend()
 	
 	
 	TextInput->SetText(FText());
+
 }
 
 void UUI_ChatList::OnTextCommit(const FText& Text, ETextCommit::Type CommitMethod)
@@ -57,6 +58,9 @@ UUI_Chat* UUI_ChatList::AddRequestChat(int32 ID, const FText& Content)
 			{
 				ScrollBoxSlot->SetPadding(FMargin(90.f, 10.f, 10.f, 10.f));
 				ScrollBoxSlot->SetHorizontalAlignment(HAlign_Left);
+
+				ListBox->ScrollToEnd();
+
 				return Chat;
 			}
 		}

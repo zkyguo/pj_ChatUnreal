@@ -19,6 +19,12 @@ class PJ_CHATUNREAL_API UUI_ChatHistoryList : public UUI_Base
 {
 	GENERATED_BODY()
 public:
+	enum EHandleHistorySlotResult
+	{
+		INPROGRESS,
+		COMPLETE,
+	};
+
 	UUI_ChatHistoryList();
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -38,6 +44,11 @@ public:
 	UUI_ChatHistory* AddHistorySlot(const FString& InContent);
 
 	void UpdateHistorySlot();
+	void UpdateSelectHistorySlot();
+	void UpdateSelectHistorySlot(const FString &SlotName);
+
+	void CallHistorySlot(TFunction<EHandleHistorySlotResult(UUI_ChatHistory*)> InFun);
+	void ClearClicked();
 
 protected:
 	UFUNCTION()
@@ -45,6 +56,5 @@ protected:
 
 	UFUNCTION()
 	void OnDeleteSlot();
-
-
+	
 };

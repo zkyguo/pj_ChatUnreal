@@ -7,7 +7,7 @@
 UUserWidget* UUI_Base::GetUserWidgetsClass(TSubclassOf<UUserWidget> widgetClass)
 {
 	TArray<UUserWidget*> UserWidgets;
-	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), UserWidgets, widgetClass, true);
+	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), UserWidgets, widgetClass, false);
 
 	if(UserWidgets.Num() > 0)
 	{

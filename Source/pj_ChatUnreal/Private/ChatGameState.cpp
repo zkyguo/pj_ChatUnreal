@@ -226,4 +226,19 @@ void AChatGameState::UpdateCurrentSlotName()
 	}
 }
 
+void AChatGameState::SetCurrentSlotName(const FString& Name)
+{
+	currentSlotName = Name;
+	for (auto &tmp : SaveSlotList->Slots)
+	{
+		if(currentSlotName.Equals(tmp.SlotName.ToString()))
+		{
+			tmp.DateText = FDateTime::Now().ToString();
+			UGameplayStatics::SaveGameToSlot(SaveSlotList, TEXT("SlotList"), 0);
+			break;
+		}
+		
+	}
+}
+
 
