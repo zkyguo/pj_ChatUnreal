@@ -181,7 +181,7 @@ bool AChatGameState::DeleteCurrentGameData()
 
 bool AChatGameState::IsLastSavaDataSlot() const
 {
-	return SaveData.Num() == 1;
+	return SaveSlotList->Slots.Num() == 1;
 }
 
 FString AChatGameState::GetUniqueSaveDataName()

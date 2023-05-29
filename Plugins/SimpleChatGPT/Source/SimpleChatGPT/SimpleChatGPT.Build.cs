@@ -26,6 +26,8 @@ public class SimpleChatGPT : ModuleRules
 			new string[]
 			{
 				"Core",
+                "HTTP",
+                "Json",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -35,8 +37,7 @@ public class SimpleChatGPT : ModuleRules
 			new string[]
 			{
 				"CoreUObject",
-				"HTTP",
-				"Json",
+
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

@@ -14,23 +14,24 @@ namespace  ChatHttp
 		DELETE,
 	};
 
-	struct FHTTPDelegate
+	struct SIMPLECHATGPT_API FHTTPDelegate
 	{
 		FHttpRequestCompleteDelegate HttpCompleteDelegate;
 	};
 
 
-	struct FHTTP : public TSharedFromThis<FHTTP>
+	struct SIMPLECHATGPT_API FHTTP : public TSharedFromThis<FHTTP>
 	{
 		/**
 		 * @brief Create Http object by Delegate
-		 * @param InDelegate 
-		 * @return 
+		 * @param InDelegate
+		 * @return
 		 */
-		static TSharedPtr<FHTTP> CreateHTTPObject (FHTTPDelegate InDelegate);
+		static TSharedPtr<FHTTP> CreateHTTPObject(FHTTPDelegate InDelegate);
 
 	public :
 		FHTTP(FHTTPDelegate InDelegate);
+
 
 		/**
 		 * @brief Send request to server
@@ -41,7 +42,7 @@ namespace  ChatHttp
 			const TMap<FString,FString> MetaDataHeader,
 			EHttpVerbType requestType = EHttpVerbType::POST);
 
-		bool const IsNotInUse() { return NotInUsed; }
+		bool IsNotInUse() const { return NotInUsed; }
 		void SetKOpenAiKey(const FString& Key) { OpenAiKey = Key; }
 
 		/**

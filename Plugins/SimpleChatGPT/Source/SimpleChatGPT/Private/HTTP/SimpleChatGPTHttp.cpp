@@ -20,7 +20,7 @@ namespace  ChatHttp
 		{
 			if (NotInUsed)
 			{
-				// https://api.openai.com/v1/chat/completions 
+				// https://api.openai.com/v1/completions 
 
 				NotInUsed = false;
 				TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
@@ -37,8 +37,7 @@ namespace  ChatHttp
 				Request->SetContentAsString(Contents);
 
 				Request->OnProcessRequestComplete().BindSP(this, &FHTTP::OnRequestComplete);
-				Request->ProcessRequest();
-				return true;
+				return Request->ProcessRequest();
 			}
 		}
 		

@@ -2,6 +2,8 @@
 
 
 #include "UI/Chat/Element/UI_ChatList.h"
+
+#include "ChatGameState.h"
 #include "Components/ScrollBoxSlot.h"
 #include "UI/Chat/UI_ChatMain.h"
 
@@ -23,26 +25,28 @@ void UUI_ChatList::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void UUI_ChatList::OnSend()
 {
-	FText InText = TextInput->GetText();
-
-	if (UUI_Chat* Chat = AddRequestChat(1, InText))
-	{
-		Chat->SetTextContent(InText);
-	}
 	if (UUI_ChatMain* ChatMain = GetUserWidgetsClass<UUI_ChatMain>(UUI_ChatMain::StaticClass()))
 	{
-		ChatMain->OnSendRequest(1, InText);
-	}
-	
-	
-	TextInput->SetText(FText());
+		if(ChatMain->IsNotInUse())
+		{
+			FText InText = TextInput->GetText();
+			if (UUI_Chat* Chat = AddRequestChat(1, InText))
+			{
+				SubmitChat(1, InText);
+			}
+			ChatMain->OnSendRequest(1, InText);
+			TextInput->SetText(FText());
+		}
 
+		
+	}
 }
 
 void UUI_ChatList::OnTextCommit(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	if(!Text.IsEmpty())
 	{
+		
 		OnSend();
 	}
 
@@ -56,11 +60,10 @@ UUI_Chat* UUI_ChatList::AddRequestChat(int32 ID, const FText& Content)
 		{
 			if(UScrollBoxSlot *ScrollBoxSlot = Cast<UScrollBoxSlot>(ListBox->AddChild(Chat)))
 			{
-				ScrollBoxSlot->SetPadding(FMargin(90.f, 10.f, 10.f, 10.f));
-				ScrollBoxSlot->SetHorizontalAlignment(HAlign_Left);
-
+				Chat->SetTextContent(Content);
+				ScrollBoxSlot->SetPadding(10.f);
+				ScrollBoxSlot->SetHorizontalAlignment(HAlign_Right);
 				ListBox->ScrollToEnd();
-
 				return Chat;
 			}
 		}
@@ -75,14 +78,24 @@ UUI_Chat* UUI_ChatList::AddResponseChat(int32 ID, const FText& Content)
 	{
 		if (UUI_Chat* Chat = CreateWidget<UUI_Chat>(this, ChatLeftClass))
 		{
+			Chat->SetTextContent(Content);
 			if (UScrollBoxSlot* ScrollBoxSlot = Cast<UScrollBoxSlot>(ListBox->AddChild(Chat)))
 			{
-				ScrollBoxSlot->SetPadding(FMargin(10.f, 10.f, 90.f, 10.f));
-				ScrollBoxSlot->SetHorizontalAlignment(HAlign_Right);
+				ScrollBoxSlot->SetPadding(10.f);
+				ScrollBoxSlot->SetHorizontalAlignment(HAlign_Left);
+				ListBox->ScrollToEnd();
 				return Chat;
 			}
 		}
 	}
 
 	return NULL;
+}
+
+void UUI_ChatList::SubmitChat(int32 ID, const FText& InContent)
+{
+	if(AChatGameState *GameState = GetWorld()->GetGameState<AChatGameState>())
+	{
+		GameState->AddText(ID, InContent.ToString());
+	}
 }

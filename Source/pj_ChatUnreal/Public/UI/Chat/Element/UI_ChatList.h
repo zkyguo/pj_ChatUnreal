@@ -41,9 +41,10 @@ public :
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUI_Chat> ChatLeftClass;
 
-protected:
 	UUI_Chat* AddRequestChat(int32 ID,const FText &Content);
 	UUI_Chat* AddResponseChat(int32 ID, const FText& Content);
+
+	void SubmitChat(int32 ID, const FText& InContent);
 
 protected:
 	UFUNCTION()

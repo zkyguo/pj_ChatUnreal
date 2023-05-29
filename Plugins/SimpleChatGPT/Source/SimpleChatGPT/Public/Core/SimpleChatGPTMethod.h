@@ -5,10 +5,10 @@
 
 namespace SimpleChatGPTMethod
 {
-	FString EChatGPTModelToString(EChatGPTModel	model);
-	EChatGPTModel StringToEChatGPTModel(const FString& model);
+	FString SIMPLECHATGPT_API EChatGPTModelToString(EChatGPTModel	model);
+	EChatGPTModel SIMPLECHATGPT_API StringToEChatGPTModel(const FString& model);
 
-	void FChatGPTCompletionParamToString(const FChatGPTCompletionParam param, FString &Outjson);
-	void StringToFChatGPTCompletionResponse(const FString &Json, FChatGPTCompletionResponse& OutResponse);
+	void SIMPLECHATGPT_API FChatGPTCompletionParamToString(const FChatGPTCompletionParam param, FString &Outjson);
+	void SIMPLECHATGPT_API StringToFChatGPTCompletionResponse(const FString &Json, FChatGPTCompletionResponse& OutResponse);
 
 }

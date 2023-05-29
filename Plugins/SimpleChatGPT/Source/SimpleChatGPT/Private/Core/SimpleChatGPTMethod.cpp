@@ -7,7 +7,7 @@ namespace SimpleChatGPTMethod
 	{
 		switch (model)
 		{
-		case EChatGPTModel::DAVINCI_003: return TEXT("text_davinci-003");
+		case EChatGPTModel::DAVINCI_003: return TEXT("text-davinci-003");
 		case EChatGPTModel::GPT_MAX: break;
 		default:;
 		}
@@ -17,7 +17,7 @@ namespace SimpleChatGPTMethod
 
 	EChatGPTModel StringToEChatGPTModel(const FString& model)
 	{
-		if(model.Equals("text_davinci-003"))
+		if(model.Equals("text-davinci-003"))
 		{
 			return EChatGPTModel::DAVINCI_003;
 		}
