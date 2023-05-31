@@ -29,7 +29,7 @@ public :
 	void InitSaveData();
 
 	bool SaveGameData(const FString& SlotName);
-	bool LoadGameData(const FString& SlotName);
+	UGameSaveData* LoadGameData(const FString& SlotName);
 
 	FString AddGameData();
 	bool DeleteGameData(const FString& SlotName);

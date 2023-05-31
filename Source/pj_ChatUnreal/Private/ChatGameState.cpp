@@ -12,7 +12,7 @@ AChatGameState::AChatGameState()
 
 UGameSaveData* AChatGameState::FindCurrentGameSaveData()
 {
-	return NULL;
+	return FindSaveData(currentSlotName);;
 }
 
 void AChatGameState::BeginPlay()
@@ -26,21 +26,15 @@ UGameSaveData* AChatGameState::FindSaveData(const FString& InName)
 {
 	if(const TObjectPtr<UGameSaveData> *InSaveData = SaveData.Find(InName))
 	{
-		return InSaveData->Get();
+		return (*InSaveData).Get();
 	}
 	else
 	{
-		if(LoadGameData(InName))
-		{
-			if (const TObjectPtr<UGameSaveData>* SaveDataLoad = SaveData.Find(InName))
-			{
-				return SaveDataLoad->Get();
-			}
-		}
+		return LoadGameData(InName);
 		
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 UChatSaveSlotList* AChatGameState::GetSaveSlotList()
@@ -118,17 +112,17 @@ bool AChatGameState::SaveGameData(const FString& InSlotName)
 	return false;
 }
 
-bool AChatGameState::LoadGameData(const FString& InData)
+UGameSaveData *AChatGameState::LoadGameData(const FString& InData)
 {
 	if(!SaveData.Contains(InData))
 	{
 		if (UGameSaveData* InSaveData = Cast<UGameSaveData>(UGameplayStatics::LoadGameFromSlot(InData, 0)))
 		{
 			SaveData.Add(InData,InSaveData);
-			return true;
+			return InSaveData;
 		}
 	}
-	return false;
+	return NULL;
 }
 
 FString AChatGameState::AddGameData() 

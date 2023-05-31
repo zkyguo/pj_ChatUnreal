@@ -16,6 +16,7 @@ void UUI_ChatList::NativeConstruct()
 	Super::NativeConstruct();
 	SendButton->OnClicked.AddDynamic(this, &UUI_ChatList::OnSend);
 	TextInput->OnTextCommitted.AddDynamic(this, &UUI_ChatList::OnTextCommit);
+	UpdateChatWidget();
 }
 
 void UUI_ChatList::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -98,4 +99,30 @@ void UUI_ChatList::SubmitChat(int32 ID, const FText& InContent)
 	{
 		GameState->AddText(ID, InContent.ToString());
 	}
+}
+
+void UUI_ChatList::UpdateChatWidget()
+{
+	if (AChatGameState* GameState = GetWorld()->GetGameState<AChatGameState>())
+	{
+		if(UGameSaveData* currentData = GameState->FindCurrentGameSaveData())
+		{
+			for (auto &tmp : currentData->ChatDatas)
+			{
+				if(tmp.ID == 1)
+				{
+					AddRequestChat(tmp.ID, FText::FromString(tmp.InContent));
+				}
+				else
+				{
+					AddResponseChat(tmp.ID, FText::FromString(tmp.InContent));
+				}
+			}
+		}
+	}
+}
+
+void UUI_ChatList::ClearChatWidget()
+{
+	ListBox->ClearChildren();
 }

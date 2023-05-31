@@ -111,6 +111,12 @@ void UUI_ChatMain::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponseP
 			ChatList->AddResponseChat(2, InContent);
 			ChatList->SubmitChat(2, InContent);
 		}
+		else if (ResponseCode == 401)
+		{
+			FText InContent = FText::FromString(TEXT("You access is not permis, please verify API key"));
+			ChatList->AddResponseChat(2, InContent);
+			ChatList->SubmitChat(2, InContent);
+		}
 	}
 	else
 	{

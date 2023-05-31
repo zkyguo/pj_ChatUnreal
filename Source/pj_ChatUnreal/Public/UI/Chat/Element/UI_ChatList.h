@@ -46,6 +46,9 @@ public :
 
 	void SubmitChat(int32 ID, const FText& InContent);
 
+	void UpdateChatWidget();
+	void ClearChatWidget();
+
 protected:
 	UFUNCTION()
 	void OnSend();

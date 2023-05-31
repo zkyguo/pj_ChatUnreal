@@ -4,6 +4,7 @@
 #include "UI/Chat/UI_ChatHistoryList.h"
 #include "ChatGameState.h"
 #include "Components/ScrollBoxSlot.h"
+#include "UI/Chat/Element/UI_ChatList.h"
 
 UUI_ChatHistoryList::UUI_ChatHistoryList()
 {
@@ -110,6 +111,14 @@ void UUI_ChatHistoryList::UpdateSelectHistorySlot()
 	if(AChatGameState *GameState = GetWorld()->GetGameState<AChatGameState>())
 	{
 		UpdateSelectHistorySlot(GameState->GetCurrentSlotName());
+	}
+
+	//Update Chat history
+	if (UUI_ChatList* ChatList = GetUserWidgetsClass<UUI_ChatList>(UUI_ChatList::StaticClass()))
+	{
+		ChatList->ClearChatWidget();
+		ChatList->UpdateChatWidget();
+
 	}
 }
 

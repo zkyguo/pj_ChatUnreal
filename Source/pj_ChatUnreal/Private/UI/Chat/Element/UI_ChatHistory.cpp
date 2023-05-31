@@ -4,6 +4,7 @@
 #include "UI/Chat/Element/UI_ChatHistory.h"
 #include "ChatGameState.h"
 #include <UI/Chat/UI_ChatHistoryList.h>
+#include "UI/Chat/Element/UI_ChatList.h"
 
 UUI_ChatHistory::UUI_ChatHistory()
 {
@@ -46,5 +47,13 @@ void UUI_ChatHistory::OnStatementChange(bool bIsChecked)
 		{
 			HistoryList->UpdateSelectHistorySlot(slotName);
 		}
+		//Update Chat history
+		if (UUI_ChatList* ChatList = GetUserWidgetsClass<UUI_ChatList>(UUI_ChatList::StaticClass()))
+		{
+			ChatList->ClearChatWidget();
+			ChatList->UpdateChatWidget();
+
+		}
+		
 	}
 }
