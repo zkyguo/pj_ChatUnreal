@@ -25,7 +25,10 @@
 		{
 			"Name": "SimpleChatGPT",
 			"Enabled": true
+		},
+		{
+			"Name": "TextToSpeech",
+			"Enabled": true
 		}
 	]
-
 }

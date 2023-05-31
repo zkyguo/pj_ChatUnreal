@@ -2,7 +2,7 @@
 
 
 #include "UI/Chat/Element/UI_ChatList.h"
-
+#include "TextToSpeechEngineSubsystem.h"
 #include "ChatGameState.h"
 #include "Components/ScrollBoxSlot.h"
 #include "UI/Chat/UI_ChatMain.h"
@@ -98,6 +98,19 @@ void UUI_ChatList::SubmitChat(int32 ID, const FText& InContent)
 	if(AChatGameState *GameState = GetWorld()->GetGameState<AChatGameState>())
 	{
 		GameState->AddText(ID, InContent.ToString());
+	}
+
+	//Display voice
+	if(ID != 1)
+	{
+		if(UTextToSpeechEngineSubsystem *TTSE =Cast<UTextToSpeechEngineSubsystem>(GEngine->GetEngineSubsystem<UTextToSpeechEngineSubsystem>()))
+		{
+			FName ChannelID = TEXT("Default Voice");
+			TTSE->AddDefaultChannel(ChannelID);
+			TTSE->ActivateChannel(ChannelID);
+			TTSE->SetVolumeOnChannel(ChannelID, 1.f);
+			TTSE->SpeakOnChannel(ChannelID, InContent.ToString());
+		}
 	}
 }
 

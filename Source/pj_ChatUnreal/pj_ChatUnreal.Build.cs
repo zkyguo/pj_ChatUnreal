@@ -8,7 +8,7 @@ public class pj_ChatUnreal : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG","HTTP", "SimpleChatGPT" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG","HTTP", "SimpleChatGPT", "TextToSpeech", "SimpleAlibabaCloudVoice" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

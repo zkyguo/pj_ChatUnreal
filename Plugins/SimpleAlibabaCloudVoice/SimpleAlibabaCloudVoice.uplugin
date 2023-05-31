@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "SimpleAlibabaCloudVoice",
+	"Description": "Including Alibaba Cloud's speech recognition and speech synthesis.",
+	"Category": "RenZhai",
+	"CreatedBy": "Other Courses",
+	"CreatedByURL": "https://renzhai.net/",
+	"DocsURL": "https://renzhai.net/793.html",
+	"MarketplaceURL": "https://renzhai.net/793.html",
+	"SupportURL": "https://renzhai.net/793.html",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "SimpleAlibabaCloudVoice",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
