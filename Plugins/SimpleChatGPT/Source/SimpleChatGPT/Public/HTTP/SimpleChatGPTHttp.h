@@ -3,6 +3,8 @@
 #include  "HTTP.h"
 #include "Core/SimpleChatGPTMethod.h"
 
+
+DECLARE_DELEGATE_ThreeParams(FHttpGPTRequestProgressDelegate, FHttpRequestPtr /*Request*/, int32 /*TotalBytes*/, int32/*BytesReceived*/ )
 namespace  ChatHttp
 {
 
@@ -17,6 +19,8 @@ namespace  ChatHttp
 	struct SIMPLECHATGPT_API FHTTPDelegate
 	{
 		FHttpRequestCompleteDelegate HttpCompleteDelegate;
+		FHttpGPTRequestProgressDelegate HttpProgressDelegate;
+		FHttpRequestHeaderReceivedDelegate HttpHeaderReceiverDelegate;
 	};
 
 
@@ -61,6 +65,9 @@ namespace  ChatHttp
 		
 	private:
 		void OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool IsSucces);
+		void OnRequestProgress(FHttpRequestPtr HttpRequest,int32 TotalBytes, int32 BytesReceived);
+		void OnRequestHeaderReceived(FHttpRequestPtr HttpRequest, const FString& HeaderName, const FString& NewHeaderReceived);
+
 		FString HttpVerbToString(EHttpVerbType verb);
 		bool NotInUsed;
 		FHTTPDelegate Delegate;

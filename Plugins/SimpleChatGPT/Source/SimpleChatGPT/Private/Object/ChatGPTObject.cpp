@@ -90,6 +90,21 @@ void UChatGPTObject::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpRespons
 	}
 }
 
+void UChatGPTObject::OnRequestProgress(FHttpRequestPtr HttpRequest, int32 TotalBytes, int32 BytesReceived)
+{
+	if(HttpRequest->GetResponse())
+	{
+		OnProgress.Broadcast(HttpRequest->GetResponse()->GetContent(), TotalBytes, BytesReceived);
+	}
+	
+}
+
+void UChatGPTObject::OnRequestHeaderReceived(FHttpRequestPtr HttpRequest, const FString& HeaderName,
+	const FString& NewHeaderReceived)
+{
+	OnReceivedResponse.Broadcast(HeaderName, NewHeaderReceived);
+}
+
 void UChatGPTObject::InitChatGPT()
 {
 	ChatHttp::FHTTPDelegate HttpDelegate;
@@ -98,6 +113,23 @@ void UChatGPTObject::InitChatGPT()
 		[&](FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool isSucceeded)
 		{
 			OnRequestComplete(HttpRequest, HttpResponse, isSucceeded);
+		}
+	);
+
+	HttpDelegate.HttpProgressDelegate.BindLambda(
+
+		[&](FHttpRequestPtr HttpRequest, int32 totalBytes, int32 BytesReceived)
+		{
+			OnRequestProgress(HttpRequest, totalBytes, BytesReceived);
+		}
+
+	);
+
+	HttpDelegate.HttpHeaderReceiverDelegate.BindLambda(
+
+		[&](FHttpRequestPtr HttpRequest, const FString& HeaderName,const FString& NewHeaderReceived)
+		{
+			OnRequestHeaderReceived(HttpRequest, HeaderName,NewHeaderReceived);
 		}
 	);
 

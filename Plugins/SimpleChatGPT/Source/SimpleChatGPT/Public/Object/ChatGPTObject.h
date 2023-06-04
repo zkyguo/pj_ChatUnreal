@@ -4,6 +4,8 @@
 #include "ChatGPTObject.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FChatGPTHttpResponseDelegate, const TArray<FString>&, ChatData, const FString&, Message);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FChatGPTHttpProgressDelegate, const TArray<uint8>&, ChatData, int32, TotalBytes, int32, BytesReceived);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FChatGPTHttpHeaderReceivedDelegate, const FString&, InHeaderName, const FString&, InHeaderValue);
 
 UCLASS(BlueprintType, Blueprintable)
 class SIMPLECHATGPT_API UChatGPTObject : public UObject
@@ -36,7 +38,16 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FChatGPTHttpResponseDelegate OnFailure;
 
+	UPROPERTY(BlueprintAssignable)
+	FChatGPTHttpProgressDelegate OnProgress;
+
+	UPROPERTY(BlueprintAssignable)
+	FChatGPTHttpHeaderReceivedDelegate OnReceivedResponse;
+
 protected:
 	void OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool IsSucces);
+	void OnRequestProgress(FHttpRequestPtr HttpRequest, int32 TotalBytes, int32 BytesReceived);
+	void OnRequestHeaderReceived(FHttpRequestPtr HttpRequest, const FString& HeaderName, const FString& NewHeaderReceived);
+
 	void InitChatGPT();
 };

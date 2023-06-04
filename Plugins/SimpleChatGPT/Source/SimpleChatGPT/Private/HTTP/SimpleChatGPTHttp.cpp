@@ -37,6 +37,9 @@ namespace  ChatHttp
 				Request->SetContentAsString(Contents);
 
 				Request->OnProcessRequestComplete().BindSP(this, &FHTTP::OnRequestComplete);
+				Request->OnRequestProgress().BindSP(this, &FHTTP::OnRequestProgress);
+				Request->OnHeaderReceived().BindSP(this, &FHTTP::OnRequestHeaderReceived);
+
 				return Request->ProcessRequest();
 			}
 		}
@@ -58,6 +61,17 @@ namespace  ChatHttp
 	{
 		NotInUsed = true;
 		Delegate.HttpCompleteDelegate.ExecuteIfBound(HttpRequest, HttpResponse, IsSucces);
+	}
+
+	void FHTTP::OnRequestProgress(FHttpRequestPtr HttpRequest, int32 TotalBytes, int32 BytesReceived)
+	{
+		Delegate.HttpProgressDelegate.ExecuteIfBound(HttpRequest, TotalBytes, BytesReceived);
+	}
+
+	void FHTTP::OnRequestHeaderReceived(FHttpRequestPtr HttpRequest, const FString& HeaderName,
+		const FString& NewHeaderReceived)
+	{
+		Delegate.HttpHeaderReceiverDelegate.ExecuteIfBound(HttpRequest, HeaderName, NewHeaderReceived);
 	}
 
 	FString FHTTP::HttpVerbToString(EHttpVerbType verb)
