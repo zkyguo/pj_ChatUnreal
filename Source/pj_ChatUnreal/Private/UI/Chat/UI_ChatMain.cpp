@@ -22,7 +22,7 @@ void UUI_ChatMain::NativeConstruct()
 	);
 
 	HTTP = ChatHttp::FHTTP::CreateHTTPObject(HttpDelegate);
-	HTTP->SetKOpenAiKey("");
+	HTTP->SetKOpenAiKey("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");
 	
 }
 

@@ -16,7 +16,7 @@ void UUI_ChatList::NativeConstruct()
 	Super::NativeConstruct();
 	SendButton->OnClicked.AddDynamic(this, &UUI_ChatList::OnSend);
 	TextInput->OnTextCommitted.AddDynamic(this, &UUI_ChatList::OnTextCommit);
-	UpdateChatWidget();
+	//UpdateChatWidget();
 }
 
 void UUI_ChatList::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
