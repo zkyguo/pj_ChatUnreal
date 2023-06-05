@@ -5,6 +5,7 @@
 
 namespace SimpleChatGPTMethod
 {
+	FString SIMPLECHATGPT_API GetGPTURL(EChatGPTModel	model);
 	FString SIMPLECHATGPT_API EChatGPTModelToString(EChatGPTModel	model);
 	EChatGPTModel SIMPLECHATGPT_API StringToEChatGPTModel(const FString& model);
 

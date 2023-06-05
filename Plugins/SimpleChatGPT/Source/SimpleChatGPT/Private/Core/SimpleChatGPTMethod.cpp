@@ -3,11 +3,36 @@
 
 namespace SimpleChatGPTMethod
 {
+	FString GetGPTURL(EChatGPTModel model)
+	{
+		FString UrlSuffix;
+		switch (model) {
+
+		case EChatGPTModel::TEXT_DAVINCI_003: 
+		case EChatGPTModel::TEXT_DAVINCI_002: 
+		case EChatGPTModel::CODE_DAVINCI_002: 
+			UrlSuffix = TEXT("v1/completions");
+			break;
+		case EChatGPTModel::GPT_3_5_TURBO: 
+		case EChatGPTModel::GPT_4: 
+		case EChatGPTModel::GPT_4_32k:
+			UrlSuffix = TEXT("v1/chat/completions");
+			break;
+		}
+
+		return FString::Printf(TEXT("https://api.openai.com/%s"),*UrlSuffix);
+	}
+
 	FString EChatGPTModelToString(EChatGPTModel	model)
 	{
 		switch (model)
 		{
-		case EChatGPTModel::DAVINCI_003: return TEXT("text-davinci-003");
+		case EChatGPTModel::TEXT_DAVINCI_003: return TEXT("text-davinci-003");
+		case EChatGPTModel::TEXT_DAVINCI_002: return TEXT("text-davinci-002");
+		case EChatGPTModel::CODE_DAVINCI_002: return TEXT("code-davinci-003");;
+		case EChatGPTModel::GPT_3_5_TURBO: return TEXT("gpt-3.5-turbo");;
+		case EChatGPTModel::GPT_4: return TEXT("gpt-4");
+		case EChatGPTModel::GPT_4_32k: return TEXT("gpt-4-32k");
 		case EChatGPTModel::GPT_MAX: break;
 		default:;
 		}
@@ -17,11 +42,30 @@ namespace SimpleChatGPTMethod
 
 	EChatGPTModel StringToEChatGPTModel(const FString& model)
 	{
-		if(model.Equals("text-davinci-003"))
+		if(model.Equals(TEXT("text-davinci-003"), ESearchCase::IgnoreCase))
 		{
-			return EChatGPTModel::DAVINCI_003;
+			return EChatGPTModel::TEXT_DAVINCI_003;
 		}
-
+		else if (model.Equals(TEXT("text-davinci-002"), ESearchCase::IgnoreCase))
+		{
+			return EChatGPTModel::TEXT_DAVINCI_002;
+		}
+		else if (model.Equals(TEXT("code-davinci-002"), ESearchCase::IgnoreCase))
+		{
+			return EChatGPTModel::CODE_DAVINCI_002;
+		}
+		else if (model.Equals(TEXT("gpt-3.5-turbo"), ESearchCase::IgnoreCase))
+		{
+			return EChatGPTModel::GPT_3_5_TURBO;
+		}
+		else if (model.Equals(TEXT("gpt-4"), ESearchCase::IgnoreCase))
+		{
+			return EChatGPTModel::GPT_4;
+		}
+		else if (model.Equals(TEXT("gpt-4-32k"), ESearchCase::IgnoreCase))
+		{
+			return EChatGPTModel::GPT_4_32k;
+		}
 		return EChatGPTModel::NONE;
 		
 	}
@@ -41,7 +85,11 @@ namespace SimpleChatGPTMethod
 			JsonWriter->WriteValue(TEXT("n"), param.N);
 			JsonWriter->WriteValue(TEXT("stream"), param.bStream);
 			JsonWriter->WriteValue(TEXT("logprobs"), NULL);
-			JsonWriter->WriteValue(TEXT("stop"), param.Stop);
+			if(!param.Stop.IsEmpty())
+			{
+				JsonWriter->WriteValue(TEXT("stop"), param.Stop);
+			}
+			
 		}
 		JsonWriter->WriteObjectEnd();//}
 		JsonWriter->Close();

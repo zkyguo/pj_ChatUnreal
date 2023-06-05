@@ -20,7 +20,10 @@ public:
 	bool Request(const FString& InURL, const FString& Contents, const TMap<FString, FString> MetaDataHeader);
 
 	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
-	bool RequestByGPTParam(const FString& InURL, const FChatGPTCompletionParam& param, const TMap<FString, FString> MetaDataHeader);
+	bool RequestByGPTParam(EChatGPTModel mode, const FChatGPTCompletionParam& param, const TMap<FString, FString> MetaDataHeader);
+
+	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
+	bool SimpleRequest(const FChatGPTCompletionParam& param,const TMap<FString, FString> MetaDataHeader);
 
 	UFUNCTION(BlueprintPure, Category = "ChatGPT")
 	bool IsNotInUse() const;

@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include  "HTTP.h"
+#include "ChatGPTLog.h"
 #include "Core/SimpleChatGPTMethod.h"
 
 
@@ -59,6 +60,17 @@ namespace  ChatHttp
 		 */
 		bool Request(
 			const FString& InURL,
+			const FChatGPTCompletionParam& param,
+			const TMap<FString, FString> MetaDataHeader,
+			EHttpVerbType requestType = EHttpVerbType::POST);
+
+		bool Request(
+			const EChatGPTModel mode,
+			const FChatGPTCompletionParam& param,
+			const TMap<FString, FString> MetaDataHeader,
+			EHttpVerbType requestType = EHttpVerbType::POST);
+
+		bool Request(
 			const FChatGPTCompletionParam& param,
 			const TMap<FString, FString> MetaDataHeader,
 			EHttpVerbType requestType = EHttpVerbType::POST);

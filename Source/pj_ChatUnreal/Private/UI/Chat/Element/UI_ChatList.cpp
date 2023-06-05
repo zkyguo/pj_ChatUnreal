@@ -79,7 +79,14 @@ UUI_Chat* UUI_ChatList::AddResponseChat(int32 ID, const FText& Content)
 	{
 		if (UUI_Chat* Chat = CreateWidget<UUI_Chat>(this, ChatLeftClass))
 		{
-			Chat->SetTextContent(Content);
+			FString OriginString = Content.ToString();
+
+			while (OriginString.StartsWith(TEXT("\n")))
+			{
+				OriginString.RemoveAt(0);
+			}
+
+			Chat->SetTextContent(FText::FromString(OriginString));
 			if (UScrollBoxSlot* ScrollBoxSlot = Cast<UScrollBoxSlot>(ListBox->AddChild(Chat)))
 			{
 				ScrollBoxSlot->SetPadding(10.f);

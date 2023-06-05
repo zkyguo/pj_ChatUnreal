@@ -1,6 +1,7 @@
 #pragma once
 #include "HTTP/SimpleChatGPTHttp.h"
 
+
 namespace  ChatHttp
 {
 	FHTTP::FHTTP(FHTTPDelegate InDelegate)
@@ -57,15 +58,51 @@ namespace  ChatHttp
 		return Request(InURL, ParamJson, MetaDataHeader, requestType);
 	}
 
+	bool FHTTP::Request(const EChatGPTModel mode, const FChatGPTCompletionParam& param,
+		const TMap<FString, FString> MetaDataHeader, EHttpVerbType requestType)
+	{
+		FString ParamJson;
+		FString Url = SimpleChatGPTMethod::GetGPTURL(mode);
+		SimpleChatGPTMethod::FChatGPTCompletionParamToString(param, ParamJson);
+
+		UE_LOG(ChatGPTLog, Log, TEXT("URL=%s"), *Url);
+		UE_LOG(ChatGPTLog, Log, TEXT("Json=%s"), *ParamJson);
+
+		return Request(Url, ParamJson, MetaDataHeader, requestType);
+	}
+
+	bool FHTTP::Request(const FChatGPTCompletionParam& param, const TMap<FString, FString> MetaDataHeader,
+		EHttpVerbType requestType)
+	{
+		return  Request(param.Mode, param, MetaDataHeader, requestType);
+	}
+
 	void FHTTP::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool IsSucces)
 	{
 		NotInUsed = true;
 		Delegate.HttpCompleteDelegate.ExecuteIfBound(HttpRequest, HttpResponse, IsSucces);
+
+		if(IsSucces)
+		{
+			UE_LOG(ChatGPTLog, Log, TEXT("[OnRequestComplete] %s"), *HttpResponse->GetContentAsString());
+		}
+		else
+		{
+			UE_LOG(ChatGPTLog, Error, TEXT("[OnRequestComplete] %s"), *HttpResponse->GetContentAsString());
+		}
+
 	}
 
 	void FHTTP::OnRequestProgress(FHttpRequestPtr HttpRequest, int32 TotalBytes, int32 BytesReceived)
 	{
 		Delegate.HttpProgressDelegate.ExecuteIfBound(HttpRequest, TotalBytes, BytesReceived);
+
+		if(HttpRequest->GetResponse())
+		{
+			UE_LOG(ChatGPTLog, Error, TEXT("[OnRequestProgress] %s"), *HttpRequest->GetResponse()->GetContentAsString());
+		}
+
+		
 	}
 
 	void FHTTP::OnRequestHeaderReceived(FHttpRequestPtr HttpRequest, const FString& HeaderName,

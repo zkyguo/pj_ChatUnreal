@@ -38,17 +38,15 @@ void UUI_ChatMain::OnSendRequest(int32 InID, const FText& Content)
 		//HTTP
 		if(HTTP)
 		{
-			//https://api.openai.com/v1/completions
-			FString URL = TEXT("https://api.openai.com/v1/completions");
 			TMap<FString, FString> CustomMetadataHeader;
-			CustomMetadataHeader.Add(TEXT("UserID"), FString::FromInt(InID));
+			CustomMetadataHeader.Add(TEXT("Chatter_ID"), FString::FromInt(InID));
 
 			FChatGPTCompletionParam Param;
 			Param.Prompt = Content.ToString();
-			Param.Mode = EChatGPTModel::DAVINCI_003;
+			Param.Mode = EChatGPTModel::TEXT_DAVINCI_003;
 
 
-			HTTP->Request(URL, Param, CustomMetadataHeader);
+			HTTP->Request(Param, CustomMetadataHeader);
 		}
 	}
 	else 

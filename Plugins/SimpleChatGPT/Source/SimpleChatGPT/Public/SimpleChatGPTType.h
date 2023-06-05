@@ -8,7 +8,14 @@ UENUM(BlueprintType)
 enum class EChatGPTModel : uint8
 {
 	NONE UMETA(DisplayName = "Invalid"),
-	DAVINCI_003 UMETA(DisplayName = "text_davinci-003"),
+	TEXT_DAVINCI_003 UMETA(DisplayName = "text-davinci-003"),
+	TEXT_DAVINCI_002 UMETA(DisplayName = "text-davinci-002"),
+	CODE_DAVINCI_002 UMETA(DisplayName = "code-davinci-002"),
+
+	GPT_3_5_TURBO UMETA(DisplayName = "gpt-3.5-turbo"),
+	GPT_4 UMETA(DisplayName = "gpt-4"),
+	GPT_4_32k UMETA(DisplayName = "gpt-4-32k"),
+
 	GPT_MAX,
 };
 

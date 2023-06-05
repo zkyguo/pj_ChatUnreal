@@ -46,10 +46,17 @@ bool UChatGPTObject::Request(const FString& InURL, const FString& Contents, cons
 	return HTTP->Request(InURL, Contents, MetaDataHeader);
 }
 
-bool UChatGPTObject::RequestByGPTParam(const FString& InURL, const FChatGPTCompletionParam& param, const TMap<FString, FString> MetaDataHeader)
+bool UChatGPTObject::RequestByGPTParam(EChatGPTModel mode, const FChatGPTCompletionParam& param,
+	const TMap<FString, FString> MetaDataHeader)
 {
-	return HTTP->Request(InURL, param, MetaDataHeader);
+	return HTTP->Request(mode, param, MetaDataHeader);
 }
+
+bool UChatGPTObject::SimpleRequest(const FChatGPTCompletionParam& param, const TMap<FString, FString> MetaDataHeader)
+{
+	return HTTP->Request(param.Mode, param, MetaDataHeader);
+}
+
 
 bool UChatGPTObject::IsNotInUse() const
 {
