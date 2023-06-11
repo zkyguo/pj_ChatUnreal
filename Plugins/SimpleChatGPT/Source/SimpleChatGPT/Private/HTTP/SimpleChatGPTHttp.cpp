@@ -26,8 +26,10 @@ namespace  ChatHttp
 				NotInUsed = false;
 				TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
 				Request->SetURL(InURL);
+
 				Request->SetHeader(TEXT("Content-Type"), FString("application/json"));
 				Request->SetHeader(TEXT("Authorization"), FString::Printf(TEXT("Bearer %s"), *OpenAiKey));
+				Request->SetHeader(TEXT("Access-Protocol"), SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_TEXT));
 
 				for (auto& Tmp : MetaDataHeader)
 				{

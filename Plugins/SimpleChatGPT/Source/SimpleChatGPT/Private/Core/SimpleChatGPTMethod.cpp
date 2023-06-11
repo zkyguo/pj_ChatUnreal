@@ -169,4 +169,9 @@ namespace SimpleChatGPTMethod
 		}
 
 	}
+
+	FString EChatGPTProtocolToString(EChatGPTProtocol Protocol)
+	{
+		return UEnum::GetValueAsString(Protocol).RightChop(FString(TEXT("EChatGPTProtocol::")).Len());
+	}
 }

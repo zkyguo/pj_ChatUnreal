@@ -12,4 +12,6 @@ namespace SimpleChatGPTMethod
 	void SIMPLECHATGPT_API FChatGPTCompletionParamToString(const FChatGPTCompletionParam param, FString &Outjson);
 	void SIMPLECHATGPT_API StringToFChatGPTCompletionResponse(const FString &Json, FChatGPTCompletionResponse& OutResponse);
 
+	FString SIMPLECHATGPT_API EChatGPTProtocolToString(EChatGPTProtocol	Protocol);
+
 }

@@ -5,6 +5,13 @@
 #include "SimpleChatGPTType.generated.h"
 
 UENUM(BlueprintType)
+enum class EChatGPTProtocol : uint8
+{
+	ChatGPT_TEXT  UMETA(DisplayName = "Chat Text"),
+	ChatGPT_IMAGE UMETA(DisplayName = "Chat Image")
+};
+
+UENUM(BlueprintType)
 enum class EChatGPTModel : uint8
 {
 	NONE UMETA(DisplayName = "Invalid"),
