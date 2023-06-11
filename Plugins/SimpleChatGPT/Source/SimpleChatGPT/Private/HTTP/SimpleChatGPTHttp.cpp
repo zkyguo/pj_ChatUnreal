@@ -15,7 +15,11 @@ namespace  ChatHttp
 		return MakeShareable(new FHTTP(InDelegate));
 	}
 
-	bool FHTTP::Request(const FString& InURL, const FString& Contents, const TMap<FString, FString> MetaDataHeader, EHttpVerbType requestType)
+	bool FHTTP::Request(const FString& InURL, 
+						const FString& Contents, 
+						const TMap<FString, FString> MetaDataHeader,
+						EChatGPTProtocol Protocol,
+						EHttpVerbType requestType)
 	{
 		if(!OpenAiKey.IsEmpty())
 		{
@@ -29,7 +33,7 @@ namespace  ChatHttp
 
 				Request->SetHeader(TEXT("Content-Type"), FString("application/json"));
 				Request->SetHeader(TEXT("Authorization"), FString::Printf(TEXT("Bearer %s"), *OpenAiKey));
-				Request->SetHeader(TEXT("Access-Protocol"), SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_TEXT));
+				Request->SetHeader(TEXT("Access-Protocol"), SimpleChatGPTMethod::EChatGPTProtocolToString(Protocol));
 
 				for (auto& Tmp : MetaDataHeader)
 				{
@@ -57,7 +61,7 @@ namespace  ChatHttp
 	{
 		FString ParamJson;
 		SimpleChatGPTMethod::FChatGPTCompletionParamToString(param, ParamJson);
-		return Request(InURL, ParamJson, MetaDataHeader, requestType);
+		return Request(InURL, ParamJson, MetaDataHeader,EChatGPTProtocol::ChatGPT_TEXT ,requestType);
 	}
 
 	bool FHTTP::Request(const EChatGPTModel mode, const FChatGPTCompletionParam& param,
@@ -70,7 +74,7 @@ namespace  ChatHttp
 		UE_LOG(ChatGPTLog, Log, TEXT("URL=%s"), *Url);
 		UE_LOG(ChatGPTLog, Log, TEXT("Json=%s"), *ParamJson);
 
-		return Request(Url, ParamJson, MetaDataHeader, requestType);
+		return Request(Url, ParamJson, MetaDataHeader, EChatGPTProtocol::ChatGPT_TEXT,requestType);
 	}
 
 	bool FHTTP::Request(const FChatGPTCompletionParam& param, const TMap<FString, FString> MetaDataHeader,
@@ -86,10 +90,18 @@ namespace  ChatHttp
 
 		if(IsSucces)
 		{
-			UE_LOG(ChatGPTLog, Log, TEXT("[OnRequestComplete] %s"), *HttpResponse->GetContentAsString());
+			if(HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_TEXT)))
+			{
+				UE_LOG(ChatGPTLog, Log, TEXT("[OnRequestComplete] %s"), *HttpResponse->GetContentAsString());
+			}
+			else if (HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_IMAGE)))
+			{
+				
+			}
 		}
 		else
 		{
+
 			UE_LOG(ChatGPTLog, Error, TEXT("[OnRequestComplete] %s"), *HttpResponse->GetContentAsString());
 		}
 

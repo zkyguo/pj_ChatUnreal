@@ -45,6 +45,7 @@ namespace  ChatHttp
 			const FString &InURL,
 			const FString &Contents,
 			const TMap<FString,FString> MetaDataHeader,
+			EChatGPTProtocol Protocol = EChatGPTProtocol::ChatGPT_TEXT,
 			EHttpVerbType requestType = EHttpVerbType::POST);
 
 		bool IsNotInUse() const { return NotInUsed; }
