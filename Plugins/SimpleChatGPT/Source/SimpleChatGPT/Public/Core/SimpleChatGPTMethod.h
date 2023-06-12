@@ -13,5 +13,9 @@ namespace SimpleChatGPTMethod
 	void SIMPLECHATGPT_API StringToFChatGPTCompletionResponse(const FString &Json, FChatGPTCompletionResponse& OutResponse);
 
 	FString SIMPLECHATGPT_API EChatGPTProtocolToString(EChatGPTProtocol	Protocol);
+	FString SIMPLECHATGPT_API EChatGPTImageSizeTypeToString(EChatGPTImageSizeType ImageSizeType);
+	FString SIMPLECHATGPT_API EChatGPTImageEncodingTypeToString(EChatGPTImageEncodingType EncodingType);
+
+	void SIMPLECHATGPT_API EChatGPtImageGenerationParamToString(FChatGPTImageGenerationParam param, FString &OutString);
 
 }

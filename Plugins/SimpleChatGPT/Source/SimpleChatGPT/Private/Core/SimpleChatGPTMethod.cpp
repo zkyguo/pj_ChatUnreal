@@ -174,4 +174,38 @@ namespace SimpleChatGPTMethod
 	{
 		return UEnum::GetValueAsString(Protocol).RightChop(FString(TEXT("EChatGPTProtocol::")).Len());
 	}
+
+	FString EChatGPTImageSizeTypeToString(EChatGPTImageSizeType ImageSizeType)
+	{
+		return UEnum::GetValueAsString(ImageSizeType).RightChop(FString(TEXT("EChatGPTImageSizeType::IMG_")).Len());
+	}
+
+	FString EChatGPTImageEncodingTypeToString(EChatGPTImageEncodingType EncodingType)
+	{
+		switch (EncodingType) {
+			case EChatGPTImageEncodingType::IMG_URL: 
+				return TEXT("url");
+			case EChatGPTImageEncodingType::IMG_Base64:
+				return TEXT("b64_json");
+		}
+
+		return TEXT("");
+	}
+
+	void EChatGPtImageGenerationParamToString(FChatGPTImageGenerationParam param, FString& OutString)
+	{
+		TSharedPtr<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter =
+			TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&OutString);
+
+		JsonWriter->WriteObjectStart();
+		{
+			JsonWriter->WriteValue(TEXT("prompt"), param.Prompt);
+			JsonWriter->WriteValue(TEXT("num_images"), param.ImageNumber);
+			JsonWriter->WriteValue(TEXT("size"), EChatGPTImageSizeTypeToString(param.ImageSizeType));
+			JsonWriter->WriteValue(TEXT("response_format"), EChatGPTImageEncodingTypeToString(param.ImageEncodingType));
+		}
+
+		JsonWriter->WriteObjectEnd();
+		JsonWriter->Close();
+	}
 }

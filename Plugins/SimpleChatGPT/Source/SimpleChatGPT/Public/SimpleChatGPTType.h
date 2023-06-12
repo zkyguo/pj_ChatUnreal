@@ -4,6 +4,22 @@
 #include "GenericPlatform/GenericPlatform.h"
 #include "SimpleChatGPTType.generated.h"
 
+
+UENUM(BlueprintType)
+enum class EChatGPTImageSizeType : uint8
+{
+	IMG_256x256  UMETA(DisplayName = "256x256"),
+	IMG_512x512 UMETA(DisplayName = "512x512"),
+	IMG_1024x1024 UMETA(DisplayName = "1024x1024")
+};
+
+UENUM(BlueprintType)
+enum class EChatGPTImageEncodingType : uint8
+{
+	IMG_URL  UMETA(DisplayName = "URL"),
+	IMG_Base64 UMETA(DisplayName = "Base64")
+};
+
 UENUM(BlueprintType)
 enum class EChatGPTProtocol : uint8
 {
@@ -130,3 +146,22 @@ struct SIMPLECHATGPT_API FChatGPTCompletionResponse
 	FChatGPTUsage Usage;
 };
 
+USTRUCT(BlueprintType)
+struct SIMPLECHATGPT_API FChatGPTImageGenerationParam
+{
+	GENERATED_BODY()
+
+	FChatGPTImageGenerationParam();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Image")
+	FString Prompt;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Image")
+	int32 ImageNumber;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Image")
+	EChatGPTImageSizeType ImageSizeType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Image")
+	EChatGPTImageEncodingType ImageEncodingType;
+};

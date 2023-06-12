@@ -30,3 +30,12 @@ FChatGPTCompletionResponse::FChatGPTCompletionResponse()
 	Created = INDEX_NONE;
 	Mode = EChatGPTModel::NONE;
 }
+
+FChatGPTImageGenerationParam::FChatGPTImageGenerationParam()
+{
+	ImageNumber = 1;
+	ImageSizeType = EChatGPTImageSizeType::IMG_256x256;
+	ImageEncodingType = EChatGPTImageEncodingType::IMG_URL;
+}
+
+
