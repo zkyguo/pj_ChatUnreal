@@ -73,13 +73,14 @@ void UChatGPTObject::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpRespons
 {
 	if (bSucceeded)
 	{
-		int32 ResponseCode = HttpResponse->GetResponseCode();
-		if (ResponseCode == 200)
+		if (EHttpResponseCodes::IsOk(HttpResponse->GetResponseCode()))
 		{
-			if(HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_TEXT)))
+			if (OnSucces.IsBound())
 			{
-				if (OnSucces.IsBound())
+				if (HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_TEXT)))
 				{
+
+	
 					FString JsonString = HttpResponse->GetContentAsString();
 
 					FChatGPTCompletionResponse ChatGPTCompletionResponses;
@@ -94,12 +95,26 @@ void UChatGPTObject::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpRespons
 					OnSucces.Broadcast(TextContent, TEXT(""));
 
 					return;
+					
+				}
+				else if (HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_IMAGE)))
+				{
+					FString JsonString = HttpResponse->GetContentAsString();
+
+					TArray<FString> TextContent;
+					FString Msg;
+					SimpleChatGPTMethod::StringToImageResponse(JsonString, TextContent, Msg);
+
+					OnSucces.Broadcast(TextContent, Msg);
+
+					return;
+				}
+				else
+				{
+					
 				}
 			}
-			else if (HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_IMAGE)))
-			{
-				
-			}
+			
 		}
 	}
 

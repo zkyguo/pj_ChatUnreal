@@ -208,4 +208,36 @@ namespace SimpleChatGPTMethod
 		JsonWriter->WriteObjectEnd();
 		JsonWriter->Close();
 	}
+
+	void StringToImageResponse(const FString& Json, TArray<FString>& OutData, FString& OutType)
+	{
+		TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Json);
+		TSharedPtr<FJsonValue> ReadRoot;
+
+		if (FJsonSerializer::Deserialize(JsonReader, ReadRoot))
+		{
+			if (TSharedPtr<FJsonObject> InJsonObject = ReadRoot->AsObject())
+			{
+				TArray<TSharedPtr<FJsonValue>> DataArray = InJsonObject->GetArrayField("data");
+				for (auto &Tmp : DataArray)
+				{
+					TSharedPtr<FJsonObject> SubObject = Tmp->AsObject();
+					if(SubObject->HasField("b64_json"))
+					{
+						OutType = TEXT("b64_json");
+						OutData.Add(SubObject->GetStringField(OutType));
+					}
+					else if(SubObject->HasField("url"))	
+					{
+						OutType = TEXT("url");
+						OutData.Add(SubObject->GetStringField(OutType));
+					}
+					else
+					{
+						OutType = TEXT("Failed to obtain Image data");
+					}
+				}
+			}
+		}
+	}
 }
