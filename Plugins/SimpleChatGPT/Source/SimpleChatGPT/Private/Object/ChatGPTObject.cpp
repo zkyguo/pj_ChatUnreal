@@ -46,8 +46,14 @@ bool UChatGPTObject::Request(const FString& InURL, const FString& Contents, cons
 	return HTTP->Request(InURL, Contents, MetaDataHeader);
 }
 
-bool UChatGPTObject::RequestByGPTParam(EChatGPTModel mode, const FChatGPTCompletionParam& param,
+bool UChatGPTObject::RequestImage(const FChatGPTImageGenerationParam& param,
 	const TMap<FString, FString> MetaDataHeader)
+{
+	return HTTP->Request(param, MetaDataHeader);
+}
+
+bool UChatGPTObject::RequestByGPTParam(EChatGPTModel mode, const FChatGPTCompletionParam& param,
+                                       const TMap<FString, FString> MetaDataHeader)
 {
 	return HTTP->Request(mode, param, MetaDataHeader);
 }
@@ -70,22 +76,29 @@ void UChatGPTObject::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpRespons
 		int32 ResponseCode = HttpResponse->GetResponseCode();
 		if (ResponseCode == 200)
 		{
-			if (OnSucces.IsBound())
+			if(HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_TEXT)))
 			{
-				FString JsonString = HttpResponse->GetContentAsString();
-
-				FChatGPTCompletionResponse ChatGPTCompletionResponses;
-				SimpleChatGPTMethod::StringToFChatGPTCompletionResponse(JsonString, ChatGPTCompletionResponses);
-
-				TArray<FString> TextContent;
-				for (auto& Tmp : ChatGPTCompletionResponses.Choices)
+				if (OnSucces.IsBound())
 				{
-					TextContent.Add(Tmp.Text);
+					FString JsonString = HttpResponse->GetContentAsString();
+
+					FChatGPTCompletionResponse ChatGPTCompletionResponses;
+					SimpleChatGPTMethod::StringToFChatGPTCompletionResponse(JsonString, ChatGPTCompletionResponses);
+
+					TArray<FString> TextContent;
+					for (auto& Tmp : ChatGPTCompletionResponses.Choices)
+					{
+						TextContent.Add(Tmp.Text);
+					}
+
+					OnSucces.Broadcast(TextContent, TEXT(""));
+
+					return;
 				}
-
-				OnSucces.Broadcast(TextContent, TEXT(""));
-
-				return;
+			}
+			else if (HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_IMAGE)))
+			{
+				
 			}
 		}
 	}

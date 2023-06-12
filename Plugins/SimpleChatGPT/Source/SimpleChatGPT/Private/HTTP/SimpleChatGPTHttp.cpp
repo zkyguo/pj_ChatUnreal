@@ -34,11 +34,20 @@ namespace  ChatHttp
 				Request->SetHeader(TEXT("Content-Type"), FString("application/json"));
 				Request->SetHeader(TEXT("Authorization"), FString::Printf(TEXT("Bearer %s"), *OpenAiKey));
 				Request->SetHeader(TEXT("Access-Protocol"), SimpleChatGPTMethod::EChatGPTProtocolToString(Protocol));
+				Request->SetTimeout(60.f);
 
-				for (auto& Tmp : MetaDataHeader)
+				if(!MetaDataHeader.IsEmpty())
 				{
-					Request->SetHeader(Tmp.Key, Tmp.Value);
+					for (auto& Tmp : MetaDataHeader)
+					{
+						if(!Tmp.Key.IsEmpty() && !Tmp.Value.IsEmpty())
+						{
+							Request->SetHeader(Tmp.Key, Tmp.Value);
+						}
+						
+					}
 				}
+				
 
 				Request->SetVerb(HttpVerbToString(requestType));
 				Request->SetContentAsString(Contents);
@@ -81,6 +90,16 @@ namespace  ChatHttp
 		EHttpVerbType requestType)
 	{
 		return  Request(param.Mode, param, MetaDataHeader, requestType);
+	}
+
+	bool FHTTP::Request(const FChatGPTImageGenerationParam& param, const TMap<FString, FString> MetaDataHeader,
+		EHttpVerbType requestType)
+	{
+		FString JsonString;
+		SimpleChatGPTMethod::EChatGPtImageGenerationParamToString(param, JsonString);
+
+		FString Url = TEXT("https://api.openai.com/v1/images/generations");
+		return Request(Url, JsonString, MetaDataHeader, EChatGPTProtocol::ChatGPT_IMAGE, EHttpVerbType::POST);	
 	}
 
 	void FHTTP::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool IsSucces)

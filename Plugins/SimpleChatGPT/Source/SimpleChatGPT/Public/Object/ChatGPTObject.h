@@ -20,6 +20,9 @@ public:
 	bool Request(const FString& InURL, const FString& Contents, const TMap<FString, FString> MetaDataHeader);
 
 	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
+	bool RequestImage(const FChatGPTImageGenerationParam& param, const TMap<FString, FString> MetaDataHeader);
+
+	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
 	bool RequestByGPTParam(EChatGPTModel mode, const FChatGPTCompletionParam& param, const TMap<FString, FString> MetaDataHeader);
 
 	UFUNCTION(BlueprintCallable, Category = "ChatGPT")

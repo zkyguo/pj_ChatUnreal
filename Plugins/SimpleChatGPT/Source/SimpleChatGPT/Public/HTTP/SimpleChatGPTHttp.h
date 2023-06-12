@@ -75,7 +75,13 @@ namespace  ChatHttp
 			const FChatGPTCompletionParam& param,
 			const TMap<FString, FString> MetaDataHeader,
 			EHttpVerbType requestType = EHttpVerbType::POST);
-		
+
+		//Image request
+		bool Request(
+			const FChatGPTImageGenerationParam& param,
+			const TMap<FString, FString> MetaDataHeader,
+			EHttpVerbType requestType = EHttpVerbType::POST);
+
 	private:
 		void OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool IsSucces);
 		void OnRequestProgress(FHttpRequestPtr HttpRequest,int32 TotalBytes, int32 BytesReceived);
