@@ -3,7 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SimpleChatGPTBPLibrary.generated.h"
+#include "Engine/Texture2D.h"
+#include "SimpleChatGPTLibrary.generated.h"
 
 /* 
 *	Function library class.
@@ -23,10 +24,16 @@
 *	https://wiki.unrealengine.com/Custom_Blueprint_Node_Creation
 */
 UCLASS()
-class USimpleChatGPTBPLibrary : public UObject
+class USimpleChatGPTLibrary : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "SimpleChatGPT sample test testing"), Category = "SimpleChatGPTTesting")
-	static float SimpleChatGPTSampleFunction(float Param);
+	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
+	static UTexture2D* Base64ToTexture2D(const FString& InImageBase64String);
+
+	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
+	static bool SaveTexture2DToLocalDisk(UTexture2D* Texture2D, const FString &InFileName);
+
+	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
+	static bool CompressImageArray(int32 sizeX, int32 sizeY,const TArray<uint8> &InUncompressedBGRA, TArray<uint8> &OutCompressedBytes);
 };

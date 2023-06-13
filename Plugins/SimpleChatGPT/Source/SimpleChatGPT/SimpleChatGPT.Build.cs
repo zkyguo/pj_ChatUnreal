@@ -28,6 +28,8 @@ public class SimpleChatGPT : ModuleRules
 				"Core",
                 "HTTP",
                 "Json",
+                "ImageWrapper",
+                "Engine"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

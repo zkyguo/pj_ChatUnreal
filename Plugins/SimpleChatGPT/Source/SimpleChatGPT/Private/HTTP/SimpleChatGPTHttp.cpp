@@ -132,7 +132,7 @@ namespace  ChatHttp
 
 		if(HttpRequest->GetResponse())
 		{
-			UE_LOG(ChatGPTLog, Error, TEXT("[OnRequestProgress] %s"), *HttpRequest->GetResponse()->GetContentAsString());
+			UE_LOG(ChatGPTLog, Log, TEXT("[OnRequestProgress] %s"), *HttpRequest->GetResponse()->GetContentAsString());
 		}
 
 		
