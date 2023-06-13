@@ -28,6 +28,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
 	bool SimpleRequest(const FChatGPTCompletionParam& param,const TMap<FString, FString> MetaDataHeader);
 
+	//Image Download
+	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
+	bool RequestDownloadImage(const FString& InURL);
+
 	UFUNCTION(BlueprintPure, Category = "ChatGPT")
 	bool IsNotInUse() const;
 

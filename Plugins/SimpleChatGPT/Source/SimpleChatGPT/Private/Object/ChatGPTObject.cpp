@@ -63,6 +63,11 @@ bool UChatGPTObject::SimpleRequest(const FChatGPTCompletionParam& param, const T
 	return HTTP->Request(param.Mode, param, MetaDataHeader);
 }
 
+bool UChatGPTObject::RequestDownloadImage(const FString& InURL)
+{
+	return HTTP->Request(InURL, EChatGPTProtocol::ChatGPT_DOWNLOAD_IMAGE, ChatHttp::GET);
+}
+
 
 bool UChatGPTObject::IsNotInUse() const
 {
@@ -97,7 +102,7 @@ void UChatGPTObject::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpRespons
 					return;
 					
 				}
-				else if (HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_IMAGE)))
+				else if (HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_GENERATION_IMAGE)))
 				{
 					FString JsonString = HttpResponse->GetContentAsString();
 
@@ -109,9 +114,13 @@ void UChatGPTObject::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpRespons
 
 					return;
 				}
-				else
+				else if (HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_DOWNLOAD_IMAGE)))
 				{
-					
+					FString localSaveFile = TEXT("C:/Unrealproject/LocalSaveImage/test.png");
+					if(FFileHelper::SaveArrayToFile(HttpResponse->GetContent(), *localSaveFile))
+					{
+						return;
+					}
 				}
 			}
 			

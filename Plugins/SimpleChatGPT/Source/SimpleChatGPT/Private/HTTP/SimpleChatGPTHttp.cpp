@@ -99,7 +99,29 @@ namespace  ChatHttp
 		SimpleChatGPTMethod::EChatGPtImageGenerationParamToString(param, JsonString);
 
 		FString Url = TEXT("https://api.openai.com/v1/images/generations");
-		return Request(Url, JsonString, MetaDataHeader, EChatGPTProtocol::ChatGPT_IMAGE, EHttpVerbType::POST);	
+		return Request(Url, JsonString, MetaDataHeader, EChatGPTProtocol::ChatGPT_GENERATION_IMAGE, EHttpVerbType::POST);	
+	}
+
+	bool FHTTP::Request(const FString& InURL, EChatGPTProtocol Protocol, EHttpVerbType requestType)
+	{
+		if (NotInUsed)
+		{
+
+			NotInUsed = false;
+			TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
+			Request->SetURL(InURL);
+			Request->SetHeader(TEXT("Access-Protocol"), SimpleChatGPTMethod::EChatGPTProtocolToString(Protocol));
+			Request->SetTimeout(60.f);
+
+			Request->SetVerb(HttpVerbToString(requestType));
+
+			Request->OnProcessRequestComplete().BindSP(this, &FHTTP::OnRequestComplete);
+			Request->OnRequestProgress().BindSP(this, &FHTTP::OnRequestProgress);
+			Request->OnHeaderReceived().BindSP(this, &FHTTP::OnRequestHeaderReceived);
+
+			return Request->ProcessRequest();
+		}
+		return false;
 	}
 
 	void FHTTP::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool IsSucces)
@@ -113,7 +135,7 @@ namespace  ChatHttp
 			{
 				UE_LOG(ChatGPTLog, Log, TEXT("[OnRequestComplete] %s"), *HttpResponse->GetContentAsString());
 			}
-			else if (HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_IMAGE)))
+			else if (HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_GENERATION_IMAGE)))
 			{
 				
 			}

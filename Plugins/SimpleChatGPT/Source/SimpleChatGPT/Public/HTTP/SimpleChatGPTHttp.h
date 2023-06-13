@@ -82,6 +82,12 @@ namespace  ChatHttp
 			const TMap<FString, FString> MetaDataHeader,
 			EHttpVerbType requestType = EHttpVerbType::POST);
 
+		//Image Download
+		bool Request(
+			const FString& InURL,
+			EChatGPTProtocol Protocol = EChatGPTProtocol::ChatGPT_DOWNLOAD_IMAGE,
+			EHttpVerbType requestType = EHttpVerbType::GET);
+
 	private:
 		void OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool IsSucces);
 		void OnRequestProgress(FHttpRequestPtr HttpRequest,int32 TotalBytes, int32 BytesReceived);

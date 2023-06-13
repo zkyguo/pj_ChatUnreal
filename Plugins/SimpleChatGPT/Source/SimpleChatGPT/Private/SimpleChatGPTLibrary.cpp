@@ -72,16 +72,25 @@ bool USimpleChatGPTLibrary::CompressImageArray(int32 sizeX, int32 sizeY,const TA
 	TArray<uint8>& OutCompressedBytes)
 {
 	TArray<FColor> UncompressedColor;
-	UncompressedColor.SetNum(OutCompressedBytes.Num() / 4);
+	UncompressedColor.SetNum(InUncompressedBGRA.Num() / 4);
 
 	for(int32 i = 0; i < InUncompressedBGRA.Num(); i+=4)
 	{
 		int32 Index = i / 4;
 
-		UncompressedColor[Index].B = InUncompressedBGRA[i + 2];
+		//PNG
+		UncompressedColor[Index].B = InUncompressedBGRA[i];
 		UncompressedColor[Index].G = InUncompressedBGRA[i + 1];
-		UncompressedColor[Index].R = InUncompressedBGRA[i];
+		UncompressedColor[Index].R = InUncompressedBGRA[i + 2];
 		UncompressedColor[Index].A = InUncompressedBGRA[i + 3];
+
+		////RGBA
+		//UncompressedColor[Index].B = InUncompressedBGRA[i + 2];
+		//UncompressedColor[Index].G = InUncompressedBGRA[i + 1];
+		//UncompressedColor[Index].R = InUncompressedBGRA[i];
+		//UncompressedColor[Index].A = InUncompressedBGRA[i + 3];
+
+
 	}
 
 	FImageUtils::CompressImageArray(sizeX, sizeY, UncompressedColor, OutCompressedBytes);

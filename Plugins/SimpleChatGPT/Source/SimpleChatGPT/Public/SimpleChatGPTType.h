@@ -24,7 +24,8 @@ UENUM(BlueprintType)
 enum class EChatGPTProtocol : uint8
 {
 	ChatGPT_TEXT  UMETA(DisplayName = "Chat Text"),
-	ChatGPT_IMAGE UMETA(DisplayName = "Chat Image")
+	ChatGPT_GENERATION_IMAGE UMETA(DisplayName = "Chat Image"),
+	ChatGPT_DOWNLOAD_IMAGE UMETA(DisplayName = "Download Image")
 };
 
 UENUM(BlueprintType)

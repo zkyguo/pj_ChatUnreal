@@ -72,3 +72,7 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+Content/Map/UI_ImageTest.uasset
+Content/Map/Test1.umap
+Content/Map/NewWidgetBlueprint.uasset
+*.umap
