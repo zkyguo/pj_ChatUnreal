@@ -36,4 +36,7 @@ class USimpleChatGPTLibrary : public UObject
 
 	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
 	static bool CompressImageArray(int32 sizeX, int32 sizeY,const TArray<uint8> &InUncompressedBGRA, TArray<uint8> &OutCompressedBytes);
+
+	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
+	static bool SaveBase64DataToLocalDisk(const FString& InImageBase64String, const FString& InFileName);
 };

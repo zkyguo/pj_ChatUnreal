@@ -88,3 +88,29 @@ bool USimpleChatGPTLibrary::CompressImageArray(int32 sizeX, int32 sizeY,const TA
 
 	return OutCompressedBytes.Num() > 0;
 }
+
+bool USimpleChatGPTLibrary::SaveBase64DataToLocalDisk(const FString& InImageBase64String, const FString& InFileName)
+{
+	TArray<uint8> ImageBytesData;
+	if (FBase64::Decode(InImageBase64String, ImageBytesData))
+	{
+		if (TSharedPtr<IImageWrapper> PNGImageWrapper = FModuleManager::LoadModuleChecked<IImageWrapperModule>("ImageWrapper").CreateImageWrapper(EImageFormat::PNG))
+		{
+			if (PNGImageWrapper->SetCompressed(ImageBytesData.GetData(), ImageBytesData.Max()))
+			{
+				TArray<uint8> UncompressedBGRA;
+				if (PNGImageWrapper->GetRaw(ERGBFormat::BGRA, 8, UncompressedBGRA))
+				{
+					TArray<uint8> CompressedBytes;
+					if (CompressImageArray(PNGImageWrapper->GetWidth(), PNGImageWrapper->GetHeight(), UncompressedBGRA, CompressedBytes))
+					{
+						return FFileHelper::SaveArrayToFile(CompressedBytes, *InFileName);
+					}
+				}
+			}
+		}
+
+	}
+	return false;
+}
+
