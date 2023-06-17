@@ -6,7 +6,9 @@
 #include "UI/Core/UI_Base.h"
 #include <Components/Image.h>
 #include <Components/MultiLineEditableText.h>
+#include <Components/WrapBox.h>
 #include "UI_Chat.generated.h"
+
 
 
 
@@ -28,6 +30,11 @@ class PJ_CHATUNREAL_API UUI_Chat : public UUI_Base
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UMultiLineEditableText> TextContent;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UWrapBox> ImageList;
+
 public:
 	void SetTextContent(const FText& Chat);
+
+	void AddImage(UTexture2D* InImage);
 };

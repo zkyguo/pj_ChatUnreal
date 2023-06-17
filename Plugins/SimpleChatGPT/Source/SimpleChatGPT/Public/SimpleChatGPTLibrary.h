@@ -24,7 +24,7 @@
 *	https://wiki.unrealengine.com/Custom_Blueprint_Node_Creation
 */
 UCLASS()
-class USimpleChatGPTLibrary : public UObject
+class SIMPLECHATGPT_API USimpleChatGPTLibrary : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

@@ -8,7 +8,10 @@
 #include <Components/Button.h>
 #include <Components/ScrollBox.h>
 #include "UI_Chat.h"
+#include "Engine/Texture2D.h"
+#include <Components/ComboBoxString.h>
 #include "UI_ChatList.generated.h"
+
 
 
 
@@ -27,6 +30,9 @@ public :
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UComboBoxString> CommandType;
+
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UEditableText> TextInput;
 
 	UPROPERTY(meta = (BindWidget))
@@ -43,8 +49,11 @@ public :
 
 	UUI_Chat* AddRequestChat(int32 ID,const FText &Content);
 	UUI_Chat* AddResponseChat(int32 ID, const FText& Content);
+	UUI_Chat* AddResponseChat(int32 ID, UTexture2D* Image);
+	UUI_Chat* AddResponseChat(int32 ID, TArray<UTexture2D*> Images);
 
 	void SubmitChat(int32 ID, const FText& InContent);
+	void SubmitChat(int32 ID, const TArray<UTexture2D*>& InTexture);
 
 	void UpdateChatWidget();
 	void ClearChatWidget();

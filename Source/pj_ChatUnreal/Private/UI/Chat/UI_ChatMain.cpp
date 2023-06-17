@@ -2,6 +2,7 @@
 
 
 #include "UI/Chat/UI_ChatMain.h"
+#include "SimpleChatGPTLibrary.h"
 #include "Core/SimpleChatGPTMethod.h"
 
 UUI_ChatMain::UUI_ChatMain()
@@ -31,7 +32,7 @@ void UUI_ChatMain::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
-void UUI_ChatMain::OnSendRequest(int32 InID, const FText& Content)
+void UUI_ChatMain::OnSendRequest(int32 InID, FString option,const FText& Content)
 {
 	if(isLocalLink)
 	{
@@ -41,12 +42,27 @@ void UUI_ChatMain::OnSendRequest(int32 InID, const FText& Content)
 			TMap<FString, FString> CustomMetadataHeader;
 			CustomMetadataHeader.Add(TEXT("Chatter_ID"), FString::FromInt(InID));
 
-			FChatGPTCompletionParam Param;
-			Param.Prompt = Content.ToString();
-			Param.Mode = EChatGPTModel::TEXT_DAVINCI_003;
+			if(option.Equals(TEXT("/Chat:")))
+			{
+				CustomMetadataHeader.Add(TEXT("Command"), TEXT("/Chat:"));
+
+				FChatGPTCompletionParam Param;
+				Param.Prompt = Content.ToString();
+				Param.Mode = EChatGPTModel::TEXT_DAVINCI_003;
 
 
-			HTTP->Request(Param, CustomMetadataHeader);
+				HTTP->Request(Param, CustomMetadataHeader);
+			}
+			else if(option.Equals(TEXT("/Image:")))
+			{
+				CustomMetadataHeader.Add(TEXT("Command"), TEXT("/Image:"));
+				FChatGPTImageGenerationParam Param;
+				Param.Prompt = Content.ToString();
+				Param.ImageEncodingType = EChatGPTImageEncodingType::IMG_Base64;
+
+				HTTP->Request(Param, CustomMetadataHeader);
+			}
+			
 		}
 	}
 	else 
@@ -73,28 +89,64 @@ void UUI_ChatMain::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponseP
 		int32 ResponseCode = HttpResponse->GetResponseCode();
 		if (ResponseCode == 200)
 		{
-			FString JsonString = HttpResponse->GetContentAsString();
-
-			FChatGPTCompletionResponse ChatGPTCompletionResponses;
-			SimpleChatGPTMethod::StringToFChatGPTCompletionResponse(JsonString, ChatGPTCompletionResponses);
-
-			for (auto& Tmp : ChatGPTCompletionResponses.Choices)
+			if (HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_TEXT)))
 			{
-				if(Tmp.Text.IsEmpty())
-				{
-					FText InContent = FText::FromString(TEXT("No GPT answer obtained"));
-					ChatList->AddResponseChat(2, FText::FromString(TEXT("No GPT answer obtained")));
-					ChatList->SubmitChat(2, FText::FromString(TEXT("No GPT answer obtained")));
-				}
-				else
-				{
-					FText InContent = FText::FromString(Tmp.Text);
-					ChatList->AddResponseChat(2, InContent);
-					ChatList->SubmitChat(2, InContent);
-				}
-				
-			}
+				FString JsonString = HttpResponse->GetContentAsString();
 
+				FChatGPTCompletionResponse ChatGPTCompletionResponses;
+				SimpleChatGPTMethod::StringToFChatGPTCompletionResponse(JsonString, ChatGPTCompletionResponses);
+
+				for (auto& Tmp : ChatGPTCompletionResponses.Choices)
+				{
+					if (Tmp.Text.IsEmpty())
+					{
+						FText InContent = FText::FromString(TEXT("No GPT answer obtained"));
+						ChatList->AddResponseChat(2, FText::FromString(TEXT("No GPT answer obtained")));
+						ChatList->SubmitChat(2, FText::FromString(TEXT("No GPT answer obtained")));
+					}
+					else
+					{
+						FText InContent = FText::FromString(Tmp.Text);
+						ChatList->AddResponseChat(2, InContent);
+						ChatList->SubmitChat(2, InContent);
+					}
+
+				}
+			}
+			else if(HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_GENERATION_IMAGE)))
+			{
+				FString JsonString = HttpResponse->GetContentAsString();
+
+				TArray<FString> TextContent;
+				FString Msg;
+				SimpleChatGPTMethod::StringToImageResponse(JsonString, TextContent, Msg);
+
+				if(Msg.Equals(TEXT("b64_json")))
+				{
+					TArray<UTexture2D*> textures;
+					for (auto& tmp : TextContent)
+					{
+						
+						if(UTexture2D* texture = USimpleChatGPTLibrary::Base64ToTexture2D(tmp))
+						{
+							textures.Add(texture);
+						}
+						
+					}
+
+					if(textures.Num() > 0)
+					{
+						ChatList->AddResponseChat(2, textures);
+						ChatList->SubmitChat(2, textures);
+					}
+					
+				}
+				else if(Msg.Equals(TEXT("url")))
+				{
+					
+				}
+			}
+				 
 			return;
 		}
 		else if(ResponseCode == 400)

@@ -35,7 +35,9 @@ void UUI_ChatList::OnSend()
 			{
 				SubmitChat(1, InText);
 			}
-			ChatMain->OnSendRequest(1, InText);
+
+			FString option = CommandType->GetSelectedOption();
+			ChatMain->OnSendRequest(1, option, InText);
 			TextInput->SetText(FText());
 		}
 
@@ -100,13 +102,58 @@ UUI_Chat* UUI_ChatList::AddResponseChat(int32 ID, const FText& Content)
 	return NULL;
 }
 
+UUI_Chat* UUI_ChatList::AddResponseChat(int32 ID, UTexture2D* Image)
+{
+	if (ChatLeftClass)
+	{
+		if (UUI_Chat* Chat = CreateWidget<UUI_Chat>(this, ChatLeftClass))
+		{
+			Chat->AddImage(Image);
+			if (UScrollBoxSlot* ScrollBoxSlot = Cast<UScrollBoxSlot>(ListBox->AddChild(Chat)))
+			{
+				ScrollBoxSlot->SetPadding(10.f);
+				ScrollBoxSlot->SetHorizontalAlignment(HAlign_Left);
+				ListBox->ScrollToEnd();
+				return Chat;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+UUI_Chat* UUI_ChatList::AddResponseChat(int32 ID, TArray<UTexture2D*> Images)
+{
+
+	if (ChatLeftClass)
+	{
+		if (UUI_Chat* Chat = CreateWidget<UUI_Chat>(this, ChatLeftClass))
+		{
+			for(auto &Tmp : Images)
+			{
+				Chat->AddImage(Tmp);
+			}
+
+			
+			if (UScrollBoxSlot* ScrollBoxSlot = Cast<UScrollBoxSlot>(ListBox->AddChild(Chat)))
+			{
+				ScrollBoxSlot->SetPadding(10.f);
+				ScrollBoxSlot->SetHorizontalAlignment(HAlign_Left);
+				ListBox->ScrollToEnd();
+				return Chat;
+			}
+		}
+	}
+
+	return NULL;
+}
+
 void UUI_ChatList::SubmitChat(int32 ID, const FText& InContent)
 {
 	if(AChatGameState *GameState = GetWorld()->GetGameState<AChatGameState>())
 	{
 		GameState->AddText(ID, InContent.ToString());
 	}
-
 
 	//Display voice
 	if(ID != 1)
@@ -115,6 +162,13 @@ void UUI_ChatList::SubmitChat(int32 ID, const FText& InContent)
 			TEXT(""),
 			InContent.ToString());
 	}
+}
+
+void UUI_ChatList::SubmitChat(int32 ID, const TArray<UTexture2D*>& InTexture)
+{
+
+
+	//TODO : Display voice
 }
 
 void UUI_ChatList::UpdateChatWidget()

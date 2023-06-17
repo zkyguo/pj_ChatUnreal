@@ -34,7 +34,7 @@ public :
 
 
 public:
-	void OnSendRequest(int32 InID,const FText &inText);
+	void OnSendRequest(int32 InID,FString option,const FText &inText);
 	bool IsNotInUse() const;
 
 protected:
