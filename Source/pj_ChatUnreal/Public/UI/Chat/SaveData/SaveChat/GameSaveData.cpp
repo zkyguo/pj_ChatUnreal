@@ -12,7 +12,8 @@ void UGameSaveData::InitSaveChat(UWorld* InWorld)
 			tmp.Textures.Empty();
 			for (auto& path : tmp.TexturesPaths)
 			{
-				if (UTexture2D* texture = USimpleChatGPTLibrary::LocalImageToTexture2D(path))
+				FString Fullpath = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / path);
+				if (UTexture2D* texture = USimpleChatGPTLibrary::LocalImageToTexture2D(Fullpath))
 				{
 					tmp.Textures.Add(texture);
 				}

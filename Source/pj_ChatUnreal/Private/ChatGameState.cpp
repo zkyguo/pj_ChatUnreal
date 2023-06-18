@@ -63,7 +63,7 @@ void AChatGameState::AddText(int32 InID, const FString& InContent)
 
 void AChatGameState::AddTexture2D(int32 InID, const TArray<UTexture2D*>& InTexture2D)
 {
-	FString path = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() / TEXT("Saved/SaveGames/Textures"));
+	FString textureSavePath = TEXT("SaveGames/Textures");
 
 	if (UGameSaveData* InSaveData = FindSaveData(currentSlotName))
 	{
@@ -74,10 +74,13 @@ void AChatGameState::AddTexture2D(int32 InID, const TArray<UTexture2D*>& InTextu
 
 		for(int32 i = 0;i < InTexture2D.Num();i++)
 		{
-			FString pathFullName = path / InData.Time + FString::Printf(TEXT("%s_%i.png"),*InData.Time, i);
+			FString pathName = textureSavePath / InData.Time + FString::Printf(TEXT("%s_%i.png"),*InData.Time, i);
+
+			FString pathFullName = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / pathName);
+
 			if(USimpleChatGPTLibrary::SaveTexture2DToLocalDisk(InTexture2D[i], pathFullName))
 			{
-				InData.TexturesPaths.Add(pathFullName);
+				InData.TexturesPaths.Add(pathName);
 			}
 			
 		}
