@@ -23,7 +23,16 @@ void UUI_ChatMain::NativeConstruct()
 	);
 
 	HTTP = ChatHttp::FHTTP::CreateHTTPObject(HttpDelegate);
-	HTTP->SetKOpenAiKey("");
+
+	FString ApiKeyIniPath = FPaths::Combine(*FPaths::ProjectConfigDir(), TEXT("ApiKey.ini"));
+	FString ApiKey;
+	GConfig->GetString(
+		TEXT("/Script/UnrealGPT.ApiSetting"),
+		TEXT("ApiKey"),
+		ApiKey,
+		ApiKeyIniPath
+	);
+	HTTP->SetKOpenAiKey(ApiKey);
 	
 }
 

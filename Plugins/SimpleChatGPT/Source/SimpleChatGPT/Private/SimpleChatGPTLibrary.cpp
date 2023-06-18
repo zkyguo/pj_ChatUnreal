@@ -123,3 +123,41 @@ bool USimpleChatGPTLibrary::SaveBase64DataToLocalDisk(const FString& InImageBase
 	return false;
 }
 
+UTexture2D* USimpleChatGPTLibrary::LocalImageToTexture2D(const FString& Path)
+{
+	if (FPaths::FileExists(Path))
+	{
+		TArray<uint8> CompressedData;
+		if (FFileHelper::LoadFileToArray(CompressedData, *Path))
+		{
+			IImageWrapperModule& ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>(FName("ImageWrapper"));
+			
+			TSharedPtr<IImageWrapper> ImageWrapper = ImageWrapperModule.CreateImageWrapper(ImageWrapperModule.DetectImageFormat(CompressedData.GetData(), CompressedData.Max()));
+
+			if (ImageWrapper.IsValid() && ImageWrapper->SetCompressed(CompressedData.GetData(), CompressedData.Num()))
+			{
+				TArray<uint8> UncompressedRGBA;
+				if (ImageWrapper->GetRaw(ERGBFormat::BGRA, 8, UncompressedRGBA))
+				{
+					UTexture2D* Texture = UTexture2D::CreateTransient(ImageWrapper->GetWidth(), ImageWrapper->GetHeight(), PF_B8G8R8A8);
+
+					if (Texture)
+					{
+						void* TextureData = Texture->PlatformData->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
+						FMemory::Memcpy(TextureData, UncompressedRGBA.GetData(), UncompressedRGBA.Num());
+						Texture->PlatformData->Mips[0].BulkData.Unlock();
+
+						// Update the rendering resource from data.
+						Texture->UpdateResource();
+					}
+
+					return Texture;
+				}
+			}
+		}
+	}
+
+	return nullptr;
+	
+}
+

@@ -39,4 +39,7 @@ class SIMPLECHATGPT_API USimpleChatGPTLibrary : public UObject
 
 	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
 	static bool SaveBase64DataToLocalDisk(const FString& InImageBase64String, const FString& InFileName);
+
+	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
+	static UTexture2D* LocalImageToTexture2D(const FString& Path);
 };

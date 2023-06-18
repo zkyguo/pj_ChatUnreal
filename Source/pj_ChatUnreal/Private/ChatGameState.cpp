@@ -2,6 +2,7 @@
 
 
 #include "ChatGameState.h"
+#include "SimpleChatGPTLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
 AChatGameState::AChatGameState()
@@ -60,6 +61,30 @@ void AChatGameState::AddText(int32 InID, const FString& InContent)
 	}
 }
 
+void AChatGameState::AddTexture2D(int32 InID, const TArray<UTexture2D*>& InTexture2D)
+{
+	FString path = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() / TEXT("Saved/SaveGames/Textures"));
+
+	if (UGameSaveData* InSaveData = FindSaveData(currentSlotName))
+	{
+		FChatSaveData& InData = InSaveData->ChatDatas.AddDefaulted_GetRef();
+		InData.ID = InID;
+		InData.Textures = InTexture2D;
+		InData.Time = FDateTime::Now().ToString();
+
+		for(int32 i = 0;i < InTexture2D.Num();i++)
+		{
+			FString pathFullName = path / InData.Time + FString::Printf(TEXT("%s_%i.png"),*InData.Time, i);
+			if(USimpleChatGPTLibrary::SaveTexture2DToLocalDisk(InTexture2D[i], pathFullName))
+			{
+				InData.TexturesPaths.Add(pathFullName);
+			}
+			
+		}
+		SaveGameData(currentSlotName);
+	}
+}
+
 void AChatGameState::InitSaveData()
 {
 	if (UChatSaveSlotList* LocalSaveData = Cast<UChatSaveSlotList>(UGameplayStatics::LoadGameFromSlot(TEXT("SlotList"), 0)))
@@ -87,6 +112,9 @@ void AChatGameState::InitSaveData()
 			if (UGameSaveData* NewSaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass())))
 			{
 				SaveData.Add(InputSlot.SlotName.ToString(), NewSaveData);
+
+				NewSaveData->InitSaveChat(GetWorld());
+
 				SaveGameData(InputSlot.SlotName.ToString());
 			}
 		}
@@ -119,6 +147,7 @@ UGameSaveData *AChatGameState::LoadGameData(const FString& InData)
 		if (UGameSaveData* InSaveData = Cast<UGameSaveData>(UGameplayStatics::LoadGameFromSlot(InData, 0)))
 		{
 			SaveData.Add(InData,InSaveData);
+			InSaveData->InitSaveChat(GetWorld());
 			return InSaveData;
 		}
 	}

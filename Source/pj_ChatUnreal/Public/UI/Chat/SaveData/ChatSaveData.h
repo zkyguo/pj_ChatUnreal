@@ -20,5 +20,11 @@ struct FChatSaveData
 
 	UPROPERTY(SaveGame)
 	FString Time;
+
+	UPROPERTY()
+	TArray<UTexture2D*> Textures;
+
+	UPROPERTY()
+	TArray<FString> TexturesPaths;
 };
 

@@ -166,7 +166,10 @@ void UUI_ChatList::SubmitChat(int32 ID, const FText& InContent)
 
 void UUI_ChatList::SubmitChat(int32 ID, const TArray<UTexture2D*>& InTexture)
 {
-
+	if (AChatGameState* GameState = GetWorld()->GetGameState<AChatGameState>())
+	{
+		GameState->AddTexture2D(ID, InTexture);
+	}
 
 	//TODO : Display voice
 }
@@ -185,7 +188,15 @@ void UUI_ChatList::UpdateChatWidget()
 				}
 				else
 				{
-					AddResponseChat(tmp.ID, FText::FromString(tmp.InContent));
+					if(tmp.Textures.Num() > 0)
+					{
+						AddResponseChat(tmp.ID, tmp.Textures);
+					}
+					else
+					{
+						AddResponseChat(tmp.ID, FText::FromString(tmp.InContent));
+					}
+					
 				}
 			}
 		}

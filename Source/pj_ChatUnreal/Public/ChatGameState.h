@@ -26,6 +26,8 @@ public :
 	UChatSaveSlotList* GetSaveSlotList();
 
 	void AddText(int32 InID,const FString &InData);
+	void AddTexture2D(int32 InID, const TArray<UTexture2D*> &InTexture2D);
+
 	void InitSaveData();
 
 	bool SaveGameData(const FString& SlotName);
