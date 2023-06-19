@@ -4,6 +4,14 @@
 #include "GenericPlatform/GenericPlatform.h"
 #include "SimpleChatGPTType.generated.h"
 
+UENUM(BlueprintType)
+enum class EChatGPTRole : uint8
+{
+	USER UMETA(DisplayName = "User"),
+	ASSISTANT UMETA(DisplayName = "Assistant"),
+	SYSTEM UMETA(DisplayName = "System")
+};
+
 
 UENUM(BlueprintType)
 enum class EChatGPTImageSizeType : uint8
@@ -44,29 +52,71 @@ enum class EChatGPTModel : uint8
 };
 
 USTRUCT(BlueprintType)
-struct SIMPLECHATGPT_API FChatGPTCompletionParam
+struct SIMPLECHATGPT_API FChatGPTParamBase
+{
+	GENERATED_BODY()
+
+	FChatGPTParamBase();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CompletionBaseParam")
+	EChatGPTModel Mode;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CompletionBaseParam")
+	int32 MaxToken;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CompletionBaseParam")
+	float Temperature;
+};
+
+USTRUCT(BlueprintType)
+struct SIMPLECHATGPT_API FChatGPTCompletionParam : public FChatGPTParamBase
 {
 	GENERATED_BODY()
 
 	FChatGPTCompletionParam();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="CompletionParam")
-	EChatGPTModel Mode;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CompletionParam")
 	FString Prompt;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CompletionParam")
-	int32 MaxToken;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CompletionParam")
-	float Temperature;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CompletionParam")
 	float Top_p;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CompletionParam")
 	float N;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CompletionParam")
 	bool bStream;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CompletionParam")
 	FString Stop;
 };
+
+USTRUCT(BlueprintType)
+struct SIMPLECHATGPT_API FChatGPTContextMessage
+{
+	GENERATED_BODY()
+
+	FChatGPTContextMessage();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Message")
+	EChatGPTRole Role;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Message")
+	FString Content;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Message")
+	FString Name;
+};
+
+USTRUCT(BlueprintType)
+struct SIMPLECHATGPT_API FChatGPTCompletionContextParam : public FChatGPTParamBase
+{
+	GENERATED_BODY()
+
+	FChatGPTCompletionContextParam();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CompletionContextParam")
+	TArray<FChatGPTContextMessage> Messages;
+};
+
 
 USTRUCT(BlueprintType)
 struct SIMPLECHATGPT_API FChatGPTLogprobs
@@ -101,6 +151,9 @@ struct SIMPLECHATGPT_API FChatGPTChoice
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChatGPTChoice")
 	FString FinishReason;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChatGPTChoice")
+	FChatGPTContextMessage Message;
 };
 
 USTRUCT(BlueprintType)

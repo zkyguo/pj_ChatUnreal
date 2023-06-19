@@ -240,4 +240,27 @@ namespace SimpleChatGPTMethod
 			}
 		}
 	}
+
+	void ChatGPTRoleToString(EChatGPTRole InRole, FString& OutString)
+	{
+		OutString = UEnum::GetValueAsString(InRole).RightChop(FString(TEXT("EChatGPTRole::")).Len()).ToLower();
+	}
+
+	EChatGPTRole StringToChatGPTRole(const FString& InString)
+	{
+		if(InString.Equals("user", ESearchCase::IgnoreCase))
+		{
+			return EChatGPTRole::USER;
+		}
+		else if(InString.Equals("assistant", ESearchCase::IgnoreCase))
+		{
+			return EChatGPTRole::ASSISTANT;
+		}
+		else if (InString.Equals("system", ESearchCase::IgnoreCase))
+		{
+			return EChatGPTRole::SYSTEM;
+		}
+
+		return EChatGPTRole::USER;
+	}
 }

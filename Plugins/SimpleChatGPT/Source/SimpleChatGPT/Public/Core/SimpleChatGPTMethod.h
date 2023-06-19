@@ -18,4 +18,7 @@ namespace SimpleChatGPTMethod
 
 	void SIMPLECHATGPT_API EChatGPtImageGenerationParamToString(FChatGPTImageGenerationParam param, FString &OutString);
 	void SIMPLECHATGPT_API StringToImageResponse(const FString& Json, TArray<FString> &OutData, FString &OutType);
+
+	void SIMPLECHATGPT_API ChatGPTRoleToString(EChatGPTRole InRole,FString &OutString);
+	EChatGPTRole SIMPLECHATGPT_API StringToChatGPTRole(const FString& InString);
 }

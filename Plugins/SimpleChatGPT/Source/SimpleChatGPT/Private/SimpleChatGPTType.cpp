@@ -2,16 +2,30 @@
 #pragma once
 #include "SimpleChatGPTType.h"
 
-FChatGPTCompletionParam::FChatGPTCompletionParam()
+FChatGPTParamBase::FChatGPTParamBase()
 {
 	Mode = EChatGPTModel::TEXT_DAVINCI_003;
 	MaxToken = 1024;
 	Temperature = 0.5f;
+}
+
+FChatGPTCompletionParam::FChatGPTCompletionParam()
+{
+	Mode = EChatGPTModel::TEXT_DAVINCI_003;
 	Top_p = 1.0f;
 	N = 1.0f;
 	bStream = false;
 }
 
+FChatGPTCompletionContextParam::FChatGPTCompletionContextParam()
+{
+
+}
+
+FChatGPTContextMessage::FChatGPTContextMessage()
+{
+	Role = EChatGPTRole::USER;
+}
 
 FChatGPTChoice::FChatGPTChoice()
 {
