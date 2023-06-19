@@ -162,6 +162,16 @@ namespace SimpleChatGPTMethod
 								}
 							}
 
+							if(ChoiceJsonObject->HasField(TEXT("Message")))
+							{
+								if(const TSharedPtr<FJsonObject>& InMessageObject = ChoiceJsonObject->GetObjectField(TEXT("message")))
+								{
+									Choice.Message.Role = StringToChatGPTRole(InMessageObject->GetStringField(TEXT("role")));
+									Choice.Message.Content = InMessageObject->GetStringField(TEXT("content"));
+									Choice.Message.Name = InMessageObject->GetStringField(TEXT("name"));
+								}
+							}
+
 						}
 					}
 				}
@@ -246,6 +256,11 @@ namespace SimpleChatGPTMethod
 		OutString = UEnum::GetValueAsString(InRole).RightChop(FString(TEXT("EChatGPTRole::")).Len()).ToLower();
 	}
 
+	FString ChatGPTRoleToString(EChatGPTRole InRole)
+	{
+		return UEnum::GetValueAsString(InRole).RightChop(FString(TEXT("EChatGPTRole::")).Len()).ToLower();
+	}
+
 	EChatGPTRole StringToChatGPTRole(const FString& InString)
 	{
 		if(InString.Equals("user", ESearchCase::IgnoreCase))
@@ -262,5 +277,46 @@ namespace SimpleChatGPTMethod
 		}
 
 		return EChatGPTRole::USER;
+	}
+
+	void ChatGPTCompletionContextParamToString(const FString& NewContent, const FChatGPTCompletionContextParam& Param, FString& OutString)
+	{
+		TSharedPtr<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter =
+			TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&OutString);
+
+		
+		JsonWriter->WriteObjectStart();//{
+		{
+			//Add preview chat to messafe
+			JsonWriter->WriteValue(TEXT("model"), EChatGPTModelToString(Param.Mode));
+			JsonWriter->WriteValue(TEXT("max_tokens"), Param.MaxToken);
+			JsonWriter->WriteValue(TEXT("temperature"), Param.Temperature);
+
+			JsonWriter->WriteArrayStart(TEXT("messages"));
+			for(auto &tmp : Param.Messages)
+			{
+				JsonWriter->WriteObjectStart();
+				JsonWriter->WriteValue(TEXT("role"), ChatGPTRoleToString(tmp.Role));
+				JsonWriter->WriteValue(TEXT("content"), tmp.Content);
+				if(tmp.Name.IsEmpty())
+				{
+					JsonWriter->WriteValue(TEXT("name"), tmp.Name);
+				}
+
+				JsonWriter->WriteObjectEnd();
+			}
+			//Add current question to messages
+			JsonWriter->WriteObjectStart();
+			{
+				JsonWriter->WriteValue(TEXT("role"), TEXT("user"));
+				JsonWriter->WriteValue(TEXT("content"), NewContent);
+			}
+			JsonWriter->WriteObjectEnd();
+
+			JsonWriter->WriteArrayEnd();
+		}
+
+		JsonWriter->WriteObjectEnd();
+		JsonWriter->Close();
 	}
 }

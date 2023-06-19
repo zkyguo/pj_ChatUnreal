@@ -20,5 +20,8 @@ namespace SimpleChatGPTMethod
 	void SIMPLECHATGPT_API StringToImageResponse(const FString& Json, TArray<FString> &OutData, FString &OutType);
 
 	void SIMPLECHATGPT_API ChatGPTRoleToString(EChatGPTRole InRole,FString &OutString);
+	FString SIMPLECHATGPT_API ChatGPTRoleToString(EChatGPTRole InRole);
 	EChatGPTRole SIMPLECHATGPT_API StringToChatGPTRole(const FString& InString);
+
+	void SIMPLECHATGPT_API ChatGPTCompletionContextParamToString(const FString &NewContent, const FChatGPTCompletionContextParam&Param, FString &OutString);
 }
