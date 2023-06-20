@@ -68,6 +68,12 @@ bool UChatGPTObject::RequestDownloadImage(const FString& InURL)
 	return HTTP->Request(InURL, EChatGPTProtocol::ChatGPT_DOWNLOAD_IMAGE, ChatHttp::GET);
 }
 
+bool UChatGPTObject::RequestContextChat(EChatGPTModel Mode, const FString& Content,
+	const FChatGPTCompletionContextParam& Param, const TMap<FString, FString> MetaDataHeader)
+{
+	return HTTP->Request(Content, Param, MetaDataHeader);
+}
+
 
 bool UChatGPTObject::IsNotInUse() const
 {
@@ -122,6 +128,24 @@ void UChatGPTObject::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpRespons
 						return;
 					}
 				}
+				else if(HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_CONTEXT)))
+				{
+					FString JsonString = HttpResponse->GetContentAsString();
+
+					FChatGPTCompletionResponse ChatGPTCompletionResponses;
+					SimpleChatGPTMethod::StringToFChatGPTCompletionResponse(JsonString, ChatGPTCompletionResponses);
+
+					TArray<FString> TextContent;
+					for (auto& Tmp : ChatGPTCompletionResponses.Choices)
+					{
+						TextContent.Add(Tmp.Message.Content);
+					}
+
+					OnSucces.Broadcast(TextContent, TEXT(""));
+
+					return;
+				}
+
 			}
 			
 		}

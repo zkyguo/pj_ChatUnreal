@@ -19,6 +19,9 @@ struct FChatSaveData
 	FString InContent;
 
 	UPROPERTY(SaveGame)
+	FString Name;
+
+	UPROPERTY(SaveGame)
 	FString Time;
 
 	UPROPERTY()

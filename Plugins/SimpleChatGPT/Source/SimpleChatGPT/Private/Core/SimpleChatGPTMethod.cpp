@@ -162,7 +162,7 @@ namespace SimpleChatGPTMethod
 								}
 							}
 
-							if(ChoiceJsonObject->HasField(TEXT("Message")))
+							if(ChoiceJsonObject->HasField(TEXT("message")))
 							{
 								if(const TSharedPtr<FJsonObject>& InMessageObject = ChoiceJsonObject->GetObjectField(TEXT("message")))
 								{
@@ -287,7 +287,7 @@ namespace SimpleChatGPTMethod
 		
 		JsonWriter->WriteObjectStart();//{
 		{
-			//Add preview chat to messafe
+			//Add preview chat to message
 			JsonWriter->WriteValue(TEXT("model"), EChatGPTModelToString(Param.Mode));
 			JsonWriter->WriteValue(TEXT("max_tokens"), Param.MaxToken);
 			JsonWriter->WriteValue(TEXT("temperature"), Param.Temperature);
@@ -298,7 +298,7 @@ namespace SimpleChatGPTMethod
 				JsonWriter->WriteObjectStart();
 				JsonWriter->WriteValue(TEXT("role"), ChatGPTRoleToString(tmp.Role));
 				JsonWriter->WriteValue(TEXT("content"), tmp.Content);
-				if(tmp.Name.IsEmpty())
+				if(!tmp.Name.IsEmpty())
 				{
 					JsonWriter->WriteValue(TEXT("name"), tmp.Name);
 				}

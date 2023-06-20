@@ -14,6 +14,13 @@ UUI_ChatList::UUI_ChatList()
 void UUI_ChatList::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	for(auto &tmp : FChatCommand::Commands)
+	{
+		CommandType->AddOption(tmp);
+	}
+	CommandType->SetSelectedOption(FChatCommand::ChatContext);
+
 	SendButton->OnClicked.AddDynamic(this, &UUI_ChatList::OnSend);
 	TextInput->OnTextCommitted.AddDynamic(this, &UUI_ChatList::OnTextCommit);
 	//UpdateChatWidget();

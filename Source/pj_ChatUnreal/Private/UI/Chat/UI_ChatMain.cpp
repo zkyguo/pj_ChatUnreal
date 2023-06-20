@@ -2,6 +2,8 @@
 
 
 #include "UI/Chat/UI_ChatMain.h"
+
+#include "ChatGameState.h"
 #include "SimpleChatGPTLibrary.h"
 #include "Core/SimpleChatGPTMethod.h"
 
@@ -51,9 +53,9 @@ void UUI_ChatMain::OnSendRequest(int32 InID, FString option,const FText& Content
 			TMap<FString, FString> CustomMetadataHeader;
 			CustomMetadataHeader.Add(TEXT("Chatter_ID"), FString::FromInt(InID));
 
-			if(option.Equals(TEXT("/Chat:")))
+			if(option.Equals(FChatCommand::Chat))
 			{
-				CustomMetadataHeader.Add(TEXT("Command"), TEXT("/Chat:"));
+				CustomMetadataHeader.Add(TEXT("Command"), FChatCommand::Chat);
 
 				FChatGPTCompletionParam Param;
 				Param.Prompt = Content.ToString();
@@ -62,9 +64,23 @@ void UUI_ChatMain::OnSendRequest(int32 InID, FString option,const FText& Content
 
 				HTTP->Request(Param, CustomMetadataHeader);
 			}
-			else if(option.Equals(TEXT("/Image:")))
+			else if (option.Equals(FChatCommand::ChatContext))
 			{
-				CustomMetadataHeader.Add(TEXT("Command"), TEXT("/Image:"));
+				CustomMetadataHeader.Add(TEXT("Command"), FChatCommand::ChatContext);
+
+				FChatGPTCompletionContextParam Param;
+				Param.Mode = EChatGPTModel::GPT_3_5_TURBO;
+
+				if(AChatGameState *GameState = GetWorld()->GetGameState<AChatGameState>())
+				{
+					GameState->GetContextMessages(Param.Messages);
+				}
+
+				HTTP->Request(Content.ToString(),Param, CustomMetadataHeader);
+			}
+			else if(option.Equals(FChatCommand::ImageEngine))
+			{
+				CustomMetadataHeader.Add(TEXT("Command"), FChatCommand::ImageEngine);
 				FChatGPTImageGenerationParam Param;
 				Param.Prompt = Content.ToString();
 				Param.ImageEncodingType = EChatGPTImageEncodingType::IMG_Base64;
@@ -153,6 +169,20 @@ void UUI_ChatMain::OnRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponseP
 				else if(Msg.Equals(TEXT("url")))
 				{
 					
+				}
+			}
+			else if (HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_CONTEXT)))
+			{
+				FString JsonString = HttpResponse->GetContentAsString();
+
+				FChatGPTCompletionResponse ChatGPTCompletionResponses;
+				SimpleChatGPTMethod::StringToFChatGPTCompletionResponse(JsonString, ChatGPTCompletionResponses);
+
+				for(auto &tmp : ChatGPTCompletionResponses.Choices)
+				{
+					FText InContent = FText::FromString(tmp.Message.Content);
+					ChatList->AddResponseChat(2, InContent);
+					ChatList->SubmitChat(2, InContent);
 				}
 			}
 				 

@@ -32,6 +32,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
 	bool RequestDownloadImage(const FString& InURL);
 
+	//Context chat
+	UFUNCTION(BlueprintCallable, Category = "ChatGPT")
+	bool RequestContextChat(EChatGPTModel Mode,const FString& Content,const FChatGPTCompletionContextParam &Param, const TMap<FString, FString> MetaDataHeader);
+
 	UFUNCTION(BlueprintPure, Category = "ChatGPT")
 	bool IsNotInUse() const;
 

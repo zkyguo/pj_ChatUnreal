@@ -16,6 +16,27 @@ UGameSaveData* AChatGameState::FindCurrentGameSaveData()
 	return FindSaveData(currentSlotName);;
 }
 
+void AChatGameState::GetContextMessages(TArray<FChatGPTContextMessage>& OutMessages)
+{
+	if (UGameSaveData* InGameSaveData = FindCurrentGameSaveData())
+	{
+		for (auto& tmp : InGameSaveData->ChatDatas)
+		{
+			FChatGPTContextMessage& InContent = OutMessages.AddDefaulted_GetRef();
+			if(tmp.ID)
+			{
+				InContent.Role = EChatGPTRole::USER;
+			}
+			else
+			{
+				InContent.Role = EChatGPTRole::ASSISTANT;
+			}
+			InContent.Content = tmp.InContent;
+			InContent.Name = tmp.Name;
+		}
+	}
+}
+
 void AChatGameState::BeginPlay()
 {
 	Super::BeginPlay();

@@ -6,7 +6,9 @@
 #include "GameFramework/GameStateBase.h"
 #include <UI/Chat/SaveData/SaveChat/GameSaveData.h>
 #include <UI/Chat/SaveData/SaveChat/ChatSaveSlotList.h>
+#include <SimpleChatGPTType.h>
 #include "ChatGameState.generated.h"
+
 
 
 
@@ -45,6 +47,9 @@ public :
 
 	void SetCurrentSlotName(const FString& Name);
 	FString GetCurrentSlotName() const { return  currentSlotName; }
+
+	void GetContextMessages(TArray<FChatGPTContextMessage> &OutMessages);
+	
 protected:
 	virtual void BeginPlay() override;
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "ChatType.h"
 #include "UI_Base.generated.h"
 
 /**

@@ -92,8 +92,21 @@ namespace  ChatHttp
 		return  Request(param.Mode, param, MetaDataHeader, requestType);
 	}
 
+	bool FHTTP::Request(const FString& Contents, const FChatGPTCompletionContextParam& param,
+		const TMap<FString, FString> MetaDataHeader, EHttpVerbType requestType)
+	{
+		FString ParamJson;
+		FString Url = SimpleChatGPTMethod::GetGPTURL(param.Mode);
+		SimpleChatGPTMethod::ChatGPTCompletionContextParamToString(Contents, param, ParamJson);
+
+		UE_LOG(ChatGPTLog, Log, TEXT("URL=%s"), *Url);
+		UE_LOG(ChatGPTLog, Log, TEXT("Json=%s"), *ParamJson);
+
+		return Request(Url, ParamJson, MetaDataHeader, EChatGPTProtocol::ChatGPT_CONTEXT, requestType);
+	}
+
 	bool FHTTP::Request(const FChatGPTImageGenerationParam& param, const TMap<FString, FString> MetaDataHeader,
-		EHttpVerbType requestType)
+	                    EHttpVerbType requestType)
 	{
 		FString JsonString;
 		SimpleChatGPTMethod::EChatGPtImageGenerationParamToString(param, JsonString);
@@ -138,6 +151,11 @@ namespace  ChatHttp
 			else if (HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_GENERATION_IMAGE)))
 			{
 				
+
+			}
+			else if (HttpRequest->GetHeader(TEXT("Access-Protocol")).Equals(SimpleChatGPTMethod::EChatGPTProtocolToString(EChatGPTProtocol::ChatGPT_CONTEXT)))
+			{
+				UE_LOG(ChatGPTLog, Log, TEXT("[OnRequestComplete] %s"), *HttpResponse->GetContentAsString());
 			}
 		}
 		else
